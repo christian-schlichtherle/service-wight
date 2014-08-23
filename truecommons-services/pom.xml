@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (C) 2012-2013 Schlichtherle IT Services.
+  - All rights reserved. Use is subject to license terms.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>net.java.truecommons</groupId>
+        <artifactId>truecommons</artifactId>
+        <version>2.3.5-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>truecommons-services</artifactId>
+
+    <name>TrueCommons Services</name>
+    <description>
+        Provides service location which is designed to work well in both JEE
+        and OSGi environments and perfectly fits the dependency injection idiom
+        with support for JSR 330.
+    </description>
+
+    <properties>
+        <netbeans.hint.jdkPlatform>JDK_1.6</netbeans.hint.jdkPlatform>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>truecommons-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+</project>
