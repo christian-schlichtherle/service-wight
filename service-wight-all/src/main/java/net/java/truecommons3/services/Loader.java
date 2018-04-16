@@ -46,8 +46,7 @@ public final class Loader {
      * @throws ServiceConfigurationError if locating the resources fails for
      *         some reason.
      */
-    public Iterable<URL> resourcesFor(final String name)
-    throws ServiceConfigurationError {
+    public Iterable<URL> resourcesFor(final String name) {
         final class IterableResources implements Iterable<URL> {
             @Override
             public Iterator<URL> iterator() {
@@ -58,7 +57,7 @@ public final class Loader {
                     throw new ServiceConfigurationError(ex.toString(), ex);
                 }
             }
-        } // IterableResources
+        }
         return new IterableResources();
     }
 
@@ -145,8 +144,7 @@ public final class Loader {
      * @throws ServiceConfigurationError if loading or instantiating
      *         the implementation class fails for some reason.
      */
-    public <S> Optional<S> instanceOf(final Class<S> spec, final Optional<Class<? extends S>> impl)
-    throws ServiceConfigurationError {
+    public <S> Optional<S> instanceOf(final Class<S> spec, final Optional<Class<? extends S>> impl) {
         final String name = System.getProperty(spec.getName(), impl.map(Class::getName).orElse(null));
         if (null == name) {
             return empty();
@@ -169,8 +167,7 @@ public final class Loader {
      * @throws ServiceConfigurationError if loading the class fails for some
      *         reason.
      */
-    public Class<?> classFor(final String name)
-    throws ServiceConfigurationError {
+    public Class<?> classFor(final String name) {
         try {
             try {
                 return primary.loadClass(name);
@@ -215,7 +212,7 @@ public final class Loader {
      *         {@code object} is {@code null}.
      * @throws IllegalArgumentException if any promotion step fails.
      */
-    public static <T> T promote(Object object, final Class<T> type) throws IllegalArgumentException {
+    public static <T> T promote(Object object, final Class<T> type) {
         try {
             if (object instanceof String && !type.equals(String.class))
                 object = new Loader(ofNullable(type.getClassLoader())).classFor((String) object);

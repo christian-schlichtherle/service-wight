@@ -4,11 +4,8 @@
  */
 package net.java.truecommons3.services;
 
-import net.java.truecommons3.logging.BundledMessage;
-import net.java.truecommons3.logging.LocalizedLogger;
 import org.slf4j.Logger;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -52,8 +49,7 @@ import static java.util.Optional.*;
  */
 public final class ServiceLocator {
 
-    private static final Logger logger = new LocalizedLogger(ServiceLocator.class);
-    private static final Marker CONFIG = MarkerFactory.getMarker("CONFIG");
+    private static final Logger log = LoggerFactory.getLogger(ServiceLocator.class);
 
     private final Loader loader;
 
@@ -87,7 +83,7 @@ public final class ServiceLocator {
      * @throws ServiceConfigurationError if loading or instantiating
      *         a located class fails for some reason.
      */
-    public <P> Factory<P> factory(Class<? extends LocatableFactory<P>> factory) throws ServiceConfigurationError {
+    public <P> Factory<P> factory(Class<? extends LocatableFactory<P>> factory) {
         return factory(factory, empty());
     }
 
@@ -102,14 +98,12 @@ public final class ServiceLocator {
      *         a located class fails for some reason.
      */
     public <P> Factory<P> factory(final Class<? extends LocatableFactory<P>> factory,
-                                  final Class<? extends LocatableFunction<P>> functions)
-            throws ServiceConfigurationError {
+                                  final Class<? extends LocatableFunction<P>> functions) {
         return factory(factory, of(functions));
     }
 
     private <P> Factory<P> factory(final Class<? extends LocatableFactory<P>> factory,
-                                   final Optional<Class<? extends LocatableFunction<P>>> functions)
-            throws ServiceConfigurationError {
+                                   final Optional<Class<? extends LocatableFunction<P>>> functions) {
         final LocatableFactory<P> p = provider(factory);
         final List<? extends LocatableFunction<P>> f = functions.map(this::functions).orElseGet(Collections::emptyList);
         return f.isEmpty() ? p : new FactoryWithSomeFunctions<P>(p, f);
@@ -124,8 +118,7 @@ public final class ServiceLocator {
      * @throws ServiceConfigurationError if loading or instantiating
      *         a located class fails for some reason.
      */
-    public <P> Container<P> container(Class<? extends LocatableProvider<P>> provider)
-            throws ServiceConfigurationError {
+    public <P> Container<P> container(Class<? extends LocatableProvider<P>> provider) {
         return container(provider, empty());
     }
 
@@ -140,14 +133,12 @@ public final class ServiceLocator {
      *         a located class fails for some reason.
      */
     public <P> Container<P> container(Class<? extends LocatableProvider<P>> provider,
-                                      Class<? extends LocatableDecorator<P>> decorator)
-            throws ServiceConfigurationError {
+                                      Class<? extends LocatableDecorator<P>> decorator) {
         return container(provider, of(decorator));
     }
 
     private <P> Container<P> container(final Class<? extends LocatableProvider<P>> provider,
-                                       final Optional<Class<? extends LocatableDecorator<P>>> decorator)
-            throws ServiceConfigurationError {
+                                       final Optional<Class<? extends LocatableDecorator<P>>> decorator) {
         final LocatableProvider<P> p = provider(provider);
         final List<? extends LocatableDecorator<P>> d = decorator.map(this::functions).orElseGet(Collections::emptyList);
         return new Store<P>(d.isEmpty() ? p : new ProviderWithSomeFunctions<P>(p, d));
@@ -157,7 +148,7 @@ public final class ServiceLocator {
         Optional<S> service = loader.instanceOf(spec, Optional.empty());
         if (!service.isPresent()) {
             for (final S newService : loader.instancesOf(spec)) {
-                logger.debug(CONFIG, "located", newService);
+                log.debug("Located {}.", newService);
                 if (service.isPresent()) {
                     final int op = service.get().getPriority();
                     final int np = newService.getPriority();
@@ -167,32 +158,27 @@ public final class ServiceLocator {
                         // Mind you that the loader may return multiple class
                         // instances with an equal name which are loaded by
                         // different class loaders.
-                        if (!service.getClass().getName().equals(newService.getClass().getName()))
-                            logger.warn("collision", op, service.get(), newService);
+                        if (!service.getClass().getName().equals(newService.getClass().getName())) {
+                            log.warn("Found two services with the same priority {}\nFirst: {}\nSecond: {}",
+                                    op, service.get(), newService);
+                        }
                     }
                 } else {
                     service = of(newService);
                 }
             }
         }
-        if (service.isPresent()) {
-            logger.debug(CONFIG, "selecting", service);
-            return service.get();
-        } else {
-            throw new ServiceConfigurationError(
-                    new BundledMessage(ServiceLocator.class, "null", spec).toString());
-        }
+        return service.map(s -> {
+            log.debug("Selecting {}.", s);
+            return s;
+        }).orElseThrow(() -> new ServiceConfigurationError("No service located for " + spec + "."));
     }
 
     private <S extends LocatableFunction<?>> List<S> functions(final Class<S> spec) {
         final List<S> list = new ArrayList<S>();
-        for (final S service : loader.instancesOf(spec)) {
-            list.add(service);
-        }
+        loader.instancesOf(spec).forEach(list::add);
         list.sort(new LocatableComparator());
-        for (final S service : list) {
-            logger.debug(CONFIG, "selecting", service);
-        }
+        list.forEach(service -> log.debug("Selecting {}.", service));
         return list;
     }
 }
