@@ -1,2 +1,2 @@
-net.java.truecommons3.annotations.processing.ServiceImplementationProcessor
-net.java.truecommons3.annotations.processing.ServiceInterfaceProcessor
+global.namespace.service.wight.annotation.processing.ServiceImplementationProcessor
+global.namespace.service.wight.annotation.processing.ServiceInterfaceProcessor
