@@ -11,7 +11,7 @@ import javax.lang.model.element.Element;
 import static javax.tools.Diagnostic.Kind.*;
 
 /**
- * Common super class for {@link ServiceSpecificationProcessor} and
+ * Common super class for {@link ServiceInterfaceProcessor} and
  * {@link ServiceImplementationProcessor}.
  *
  * @author Christian Schlichtherle

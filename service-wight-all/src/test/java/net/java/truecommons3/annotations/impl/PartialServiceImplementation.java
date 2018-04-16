@@ -5,7 +5,7 @@
 package net.java.truecommons3.annotations.impl;
 
 import net.java.truecommons3.annotations.ServiceImplementation;
-import net.java.truecommons3.annotations.spec.YetAnotherServiceSpecification;
+import net.java.truecommons3.annotations.api.YetAnotherServiceInterface;
 
 /**
  * Is this all?!
@@ -14,10 +14,10 @@ import net.java.truecommons3.annotations.spec.YetAnotherServiceSpecification;
  */
 @ServiceImplementation
 public class PartialServiceImplementation
-extends YetAnotherServiceSpecification {
+extends YetAnotherServiceInterface {
 
     @ServiceImplementation
     public static class BadPracticeImplementation
-    extends BadPracticeSpecification {
+    extends BadPracticeInterface {
     }
 }

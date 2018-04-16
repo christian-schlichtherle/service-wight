@@ -4,7 +4,7 @@
  */
 package net.java.truecommons3.services;
 
-import javax.inject.Provider;
+import java.util.function.Supplier;
 
 /**
  * Creates products.
@@ -14,7 +14,7 @@ import javax.inject.Provider;
  * @param  <P> the type of the products to create.
  * @author Christian Schlichtherle
  */
-public interface Factory<P> extends Provider<P> {
+public interface Factory<P> extends Supplier<P> {
 
     /**
      * Returns a <em>new</em> product upon each call.

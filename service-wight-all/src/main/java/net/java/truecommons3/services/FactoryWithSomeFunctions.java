@@ -7,7 +7,7 @@ package net.java.truecommons3.services;
 import java.util.List;
 
 /** @author Christian Schlichtherle */
-final class FactoryWithSomeFunctions<P> extends ProviderWithSomeFunctions<P> implements Factory<P> {
+final class FactoryWithSomeFunctions<P> extends SupplierWithSomeFunctions<P> implements Factory<P> {
 
     FactoryWithSomeFunctions(Factory<P> factory, List<? extends Function<P>> functions) {
         super(factory, functions);

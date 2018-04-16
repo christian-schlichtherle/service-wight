@@ -5,14 +5,14 @@
 package net.java.truecommons3.services;
 
 /**
- * A locatable provider which contains a single product.
+ * A locatable supplier which contains a single product.
  * For best results, clients should create another abstract subclass which just
  * specifies the type parameter {@code P}.
  * In the following example the type parameter is specified as
  * {@link String}:
  * <p>
  * <pre>{@code
- * package com.company.spec;
+ * package com.company.api;
  *
  * import net.java.truecommons3.services.LocatableContainer;
  *
@@ -25,7 +25,7 @@ package net.java.truecommons3.services;
  * <pre>{@code
  * package com.company.impl;
  *
- * import com.company.spec.StringContainer;
+ * import com.company.api.StringContainer;
  *
  * public class GreetingContainer extends StringContainer {
  *     \@Override
@@ -37,7 +37,7 @@ package net.java.truecommons3.services;
  * }</pre>
  * <p>
  * Next, the implementation needs to advertise its service by providing a file
- * with the name {@code META-INF/services/com.company.spec.StringContainer}
+ * with the name {@code META-INF/services/com.company.api.StringContainer}
  * on the run time class path with the following single line content:
  * <pre>{@code
  * com.company.impl.GreetingContainer
@@ -48,12 +48,12 @@ package net.java.truecommons3.services;
  * selected.
  * <p>
  * Finally, a client could now simply compose a container according to the
- * {@code StringContainer} specification by calling:
+ * {@code StringContainer} interface by calling:
  * <pre>{@code
  * package com.company.client;
  *
  * import net.java.truecommons3.services.Locator;
- * import com.company.spec.StringContainer;
+ * import com.company.api.StringContainer;
  *
  * public class Main {
  *     public static void main(String[] args) {
@@ -74,4 +74,4 @@ package net.java.truecommons3.services;
  * @param  <P> the type of the product to contain.
  * @author Christian Schlichtherle
  */
-public abstract class LocatableContainer<P> extends LocatableProvider<P> implements Container<P> { }
+public abstract class LocatableContainer<P> extends LocatableSupplier<P> implements Container<P> { }

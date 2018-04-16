@@ -12,7 +12,7 @@ package net.java.truecommons3.services;
  * so the type parameter is specified as {@link StringBuilder} again:
  * <p>
  * <pre>{@code
- * package com.company.spec;
+ * package com.company.api;
  *
  * import net.java.truecommons3.services.LocatableModifier;
  *
@@ -25,7 +25,7 @@ package net.java.truecommons3.services;
  * <pre>{@code
  * package com.company.impl;
  *
- * import com.company.spec.StringBuilderModifier;
+ * import com.company.api.StringBuilderModifier;
  *
  * public class SmalltalkModifier extends StringBuilderModifier {
  *     \@Override
@@ -37,7 +37,7 @@ package net.java.truecommons3.services;
  * }</pre>
  * <p>
  * Next, the implementation needs to advertise its service by providing a file
- * with the name {@code META-INF/services/com.company.spec.StringBuilderModifier}
+ * with the name {@code META-INF/services/com.company.api.StringBuilderModifier}
  * on the run time class path with the following single line content:
  * <pre>{@code
  * com.company.impl.SmalltalkModifier
@@ -51,13 +51,13 @@ package net.java.truecommons3.services;
  * <p>
  * Finally, a client could now simply compose a factory with some modifiers
  * according to the {@code StringBuilderFactory} and
- * {@code StringBuilderModifier} specification by calling:
+ * {@code StringBuilderModifier} interface by calling:
  * <pre>{@code
  * package com.company.client;
  *
  * import net.java.truecommons3.services.Locator;
- * import com.company.spec.StringBuilderFactory;
- * import com.company.spec.StringBuilderModifier;
+ * import com.company.api.StringBuilderFactory;
+ * import com.company.api.StringBuilderModifier;
  *
  * public class Main {
  *     public static void main(String[] args) {

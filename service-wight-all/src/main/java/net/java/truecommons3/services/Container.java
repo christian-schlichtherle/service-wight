@@ -4,7 +4,7 @@
  */
 package net.java.truecommons3.services;
 
-import javax.inject.Provider;
+import java.util.function.Supplier;
 
 /**
  * Contains a single product.
@@ -14,7 +14,7 @@ import javax.inject.Provider;
  * @param  <P> the type of the product to contain.
  * @author Christian Schlichtherle
  */
-public interface Container<P> extends Provider<P> {
+public interface Container<P> extends Supplier<P> {
 
     /**
      * Returns the <em>same</em> contained product upon each call.

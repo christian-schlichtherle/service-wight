@@ -5,10 +5,10 @@
 package net.java.truecommons3.services;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
 
-import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -86,77 +86,64 @@ public final class Loader {
 
     /**
      * Returns a new iterable collection of instances of all implementation
-     * classes of the given specification class which are advertised as
+     * classes of the given interface class which are advertised as
      * services on the class path.
      * This method should be preferred over {@link #instanceOf(Class, Optional)}
-     * if more than one meaningful implementation class of a specification
-     * class is expected at run time.
+     * if more than one meaningful service implementation class of the service interface class is expected at run time.
      * <p>
      * The implementation classes will get instantiated as if by calling
-     * <code>{@link ServiceLoader#load(Class, ClassLoader) ServiceLoader.load(spec, cl)}.iterator()</code>,
+     * <code>{@link ServiceLoader#load(Class, ClassLoader) ServiceLoader.load(iface, cl)}.iterator()</code>,
      * where {@code cl} is the resolved class loader.
      *
-     * @param  <S> the type of the services.
-     * @param  spec the specification class of the services.
-     * @return A new iterable collection of all services on the class path.
+     * @param  <S> the type of the service interface.
+     * @param  iface the service interface class.
+     * @return A new iterable collection of all found service implementations.
      */
-    public <S> Iterable<S> instancesOf(final Class<S> spec) {
+    public <S> Iterable<S> instancesOf(final Class<S> iface) {
 
         class IterableServices implements Iterable<S> {
-            @Override
-            public Iterator<S> iterator() {
-                return ServiceLoader.load(spec, classLoader()).iterator();
-            }
+
+            public Iterator<S> iterator() { return ServiceLoader.load(iface, classLoader()).iterator(); }
         }
 
         return new IterableServices();
     }
 
     private ClassLoader classLoader() {
-        return UnifiedClassLoader.resolve(primary,
-                Thread.currentThread().getContextClassLoader());
+        return UnifiedClassLoader.resolve(primary, Thread.currentThread().getContextClassLoader());
     }
 
     /**
-     * Instantiates an implementation class which is named as the value of a
-     * system property with the name of the given specification class as the
-     * key.
+     * Instantiates a service implementation class which is named as the value of a system property with the name of the
+     * given service interface class as the key.
      * If no such system property exists, then the given default implementation
-     * class gets instantiated unless it's {@code null}.
+     * class gets instantiated unless it's {@code empty()}.
      * The implementation class gets loaded using {@link #classFor} and
-     * instantiated by calling its public no-arg constructor.
+     * instantiated by calling its public no-argument constructor.
      * <p>
      * This method should be preferred over {@link #instancesOf(Class)} if
      * <ol>
-     * <li>only one meaningful implementation of a service provider interface
-     *     is expected at run time, and
-     * <li>creating a new service provider implementation instance on each call
-     *     is acceptable, and
-     * <li>either getting {@code null} as the result or providing a default
-     *     service provider implementation is acceptable.
+     * <li>only one implementation of a service interface is expected at run time, and
+     * <li>creating a new service implementation instance on each call is acceptable, and
+     * <li>either getting {@code empty()} as the result or providing a default service implementation is acceptable.
      * </ol>
      *
-     * @param  <S> the type of the service.
-     * @param  spec the specification class of the service.
-     * @param  impl the default implementation class of the service.
-     * @return A new instance of the service or {@code null}
-     *         if no implementation class is known.
-     * @throws ServiceConfigurationError if loading or instantiating
-     *         the implementation class fails for some reason.
+     * @param  <S> the type of the service interface.
+     * @param  iface the service interface class.
+     * @param  impl the default service implementation class.
+     * @return A service implementation or {@code empty()} if no implementation class is found.
+     * @throws ServiceConfigurationError if loading or instantiating a service implementation class fails for some
+     *         reason.
      */
-    public <S> Optional<S> instanceOf(final Class<S> spec, final Optional<Class<? extends S>> impl) {
-        final String name = System.getProperty(spec.getName(), impl.map(Class::getName).orElse(null));
-        if (null == name) {
-            return empty();
-        } else {
-            return impl.map(c -> {
-                try {
-                    return c.cast(classFor(name).newInstance());
-                } catch (final InstantiationException | IllegalAccessException e) {
-                    throw new ServiceConfigurationError(e.toString(), e);
-                }
-            });
-        }
+    public <S> Optional<S> instanceOf(final Class<S> iface, final Optional<Class<? extends S>> impl) {
+        return ofNullable(System.getProperty(iface.getName(), impl.map(Class::getName).orElse(null)))
+                .map(name -> {
+                    try {
+                        return iface.cast(classFor(name).getDeclaredConstructor().newInstance());
+                    } catch (final InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                        throw new ServiceConfigurationError(e.toString(), e);
+                    }
+                });
     }
 
     /**
@@ -171,14 +158,15 @@ public final class Loader {
         try {
             try {
                 return primary.loadClass(name);
-            } catch (final ClassNotFoundException ex) {
-                final ClassLoader secondary
-                        = Thread.currentThread().getContextClassLoader();
-                if (primary == secondary) throw ex; // there's no point in trying this twice.
+            } catch (final ClassNotFoundException e) {
+                final ClassLoader secondary = Thread.currentThread().getContextClassLoader();
+                if (primary == secondary) {
+                    throw e; // don't try twice
+                }
                 return secondary.loadClass(name);
             }
-        } catch (final ClassNotFoundException ex2) {
-            throw new ServiceConfigurationError(ex2.toString(), ex2);
+        } catch (final ClassNotFoundException e2) {
+            throw new ServiceConfigurationError(e2.toString(), e2);
         }
     }
 

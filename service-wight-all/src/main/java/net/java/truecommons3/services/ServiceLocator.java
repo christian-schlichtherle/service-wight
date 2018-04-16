@@ -15,14 +15,13 @@ import static java.util.Optional.*;
  * Creates containers or factories of products.
  * Resolving service instances is done in several steps:
  * <p>
- * First, the name of a given <i>provider</i> service class is used as the
+ * First, the name of a given service interface class is used as the
  * key string to lookup a {@link System#getProperty system property}.
  * If this yields a value then it's supposed to name a class which gets loaded
  * and instantiated by calling its public no-argument constructor.
  * <p>
  * Otherwise, the class path is searched for any resources with the name
- * {@code "META-INF/services/"} plus the name of the given locatable
- * <i>provider<i> class.
+ * {@code "META-INF/services/"} plus the name of the given service interface class.
  * If this yields no results, a {@link ServiceConfigurationError} is thrown.
  * <p>
  * Otherwise the classes with the names contained in these resources get loaded
@@ -41,7 +40,7 @@ import static java.util.Optional.*;
  * {@linkplain LocatableService#getPriority() priority} and kept for subsequent use.
  * <p>
  * Finally, depending on the requesting method either a container or a factory
- * gets created which will use the instantiated provider and functions
+ * gets created which will use the instantiated supplier and functions
  * to obtain a product and map it in order of their priorities.
  *
  * @see    ServiceLoader
@@ -104,7 +103,7 @@ public final class ServiceLocator {
 
     private <P> Factory<P> factory(final Class<? extends LocatableFactory<P>> factory,
                                    final Optional<Class<? extends LocatableFunction<P>>> functions) {
-        final LocatableFactory<P> p = provider(factory);
+        final LocatableFactory<P> p = supplier(factory);
         final List<? extends LocatableFunction<P>> f = functions.map(this::functions).orElseGet(Collections::emptyList);
         return f.isEmpty() ? p : new FactoryWithSomeFunctions<P>(p, f);
     }
@@ -113,41 +112,41 @@ public final class ServiceLocator {
      * Creates a new container with a single product.
      *
      * @param  <P> the type of the product to contain.
-     * @param  provider the class of the locatable provider for the product.
+     * @param  supplier the class of the locatable supplier for the product.
      * @return A new container with a single product.
      * @throws ServiceConfigurationError if loading or instantiating
      *         a located class fails for some reason.
      */
-    public <P> Container<P> container(Class<? extends LocatableProvider<P>> provider) {
-        return container(provider, empty());
+    public <P> Container<P> container(Class<? extends LocatableSupplier<P>> supplier) {
+        return container(supplier, empty());
     }
 
     /**
      * Creates a new container with a single product.
      *
      * @param  <P> the type of the product to contain.
-     * @param  provider the class of the locatable provider for the product.
+     * @param  supplier the class of the locatable supplier for the product.
      * @param  decorator the class of the locatable decoractors for the product.
      * @return A new container with a single product.
      * @throws ServiceConfigurationError if loading or instantiating
      *         a located class fails for some reason.
      */
-    public <P> Container<P> container(Class<? extends LocatableProvider<P>> provider,
+    public <P> Container<P> container(Class<? extends LocatableSupplier<P>> supplier,
                                       Class<? extends LocatableDecorator<P>> decorator) {
-        return container(provider, of(decorator));
+        return container(supplier, of(decorator));
     }
 
-    private <P> Container<P> container(final Class<? extends LocatableProvider<P>> provider,
+    private <P> Container<P> container(final Class<? extends LocatableSupplier<P>> supplier,
                                        final Optional<Class<? extends LocatableDecorator<P>>> decorator) {
-        final LocatableProvider<P> p = provider(provider);
+        final LocatableSupplier<P> p = supplier(supplier);
         final List<? extends LocatableDecorator<P>> d = decorator.map(this::functions).orElseGet(Collections::emptyList);
-        return new Store<P>(d.isEmpty() ? p : new ProviderWithSomeFunctions<P>(p, d));
+        return new Store<P>(d.isEmpty() ? p : new SupplierWithSomeFunctions<P>(p, d));
     }
 
-    private <S extends LocatableProvider<?>> S provider(final Class<S> spec) {
-        Optional<S> service = loader.instanceOf(spec, Optional.empty());
+    private <S extends LocatableSupplier<?>> S supplier(final Class<S> iface) {
+        Optional<S> service = loader.instanceOf(iface, Optional.empty());
         if (!service.isPresent()) {
-            for (final S newService : loader.instancesOf(spec)) {
+            for (final S newService : loader.instancesOf(iface)) {
                 log.debug("Located {}.", newService);
                 if (service.isPresent()) {
                     final int op = service.get().getPriority();
@@ -171,12 +170,12 @@ public final class ServiceLocator {
         return service.map(s -> {
             log.debug("Selecting {}.", s);
             return s;
-        }).orElseThrow(() -> new ServiceConfigurationError("No service located for " + spec + "."));
+        }).orElseThrow(() -> new ServiceConfigurationError("No service located for " + iface + "."));
     }
 
-    private <S extends LocatableFunction<?>> List<S> functions(final Class<S> spec) {
+    private <S extends LocatableFunction<?>> List<S> functions(final Class<S> iface) {
         final List<S> list = new ArrayList<S>();
-        loader.instancesOf(spec).forEach(list::add);
+        loader.instancesOf(iface).forEach(list::add);
         list.sort(new LocatableComparator());
         list.forEach(service -> log.debug("Selecting {}.", service));
         return list;

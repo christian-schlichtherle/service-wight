@@ -5,14 +5,14 @@
 package net.java.truecommons3.services;
 
 /**
- * A locatable provider for creating products.
+ * A locatable supplier which creates products on each request.
  * For best results, clients should create another abstract subclass which just
  * specifies the type parameter {@code P}.
  * In the following example the type parameter is specified as
  * {@link StringBuilder}:
  * <p>
  * <pre>{@code
- * package com.company.spec;
+ * package com.company.api;
  *
  * import net.java.truecommons3.services.LocatableFactory;
  *
@@ -25,7 +25,7 @@ package net.java.truecommons3.services;
  * <pre>{@code
  * package com.company.impl;
  *
- * import com.company.spec.StringBuilderFactory;
+ * import com.company.api.StringBuilderFactory;
  *
  * public class GreetingFactory extends StringBuilderFactory {
  *     \@Override
@@ -37,7 +37,7 @@ package net.java.truecommons3.services;
  * }</pre>
  * <p>
  * Next, the implementation needs to advertise its service by providing a file
- * with the name {@code META-INF/services/com.company.spec.StringBuilderFactory}
+ * with the name {@code META-INF/services/com.company.api.StringBuilderFactory}
  * on the run time class path with the following single line content:
  * <pre>{@code
  * com.company.impl.GreetingFactory
@@ -48,12 +48,12 @@ package net.java.truecommons3.services;
  * selected.
  * <p>
  * Finally, a client could now simply compose a factory according to the
- * {@code StringBuilderFactory} specification by calling:
+ * {@code StringBuilderFactory} interface by calling:
  * <pre>{@code
  * package com.company.client;
  *
  * import net.java.truecommons3.services.Locator;
- * import com.company.spec.StringBuilderFactory;
+ * import com.company.api.StringBuilderFactory;
  *
  * public class Main {
  *     public static void main(String[] args) {
@@ -74,4 +74,4 @@ package net.java.truecommons3.services;
  * @param  <P> the type of the products to create.
  * @author Christian Schlichtherle
  */
-public abstract class LocatableFactory<P> extends LocatableProvider<P> implements Factory<P> { }
+public abstract class LocatableFactory<P> extends LocatableSupplier<P> implements Factory<P> { }

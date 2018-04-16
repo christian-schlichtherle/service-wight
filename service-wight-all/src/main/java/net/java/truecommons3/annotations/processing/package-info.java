@@ -4,7 +4,7 @@
  */
 /**
  * Provides annotation processors for
- * {@linkplain net.java.truecommons3.annotations.processing.ServiceSpecificationProcessor service specifications}
+ * {@linkplain net.java.truecommons3.annotations.processing.ServiceInterfaceProcessor service interfaces}
  * and
  * {@linkplain net.java.truecommons3.annotations.processing.ServiceImplementationProcessor service implementations}.
  * These processors are configured in

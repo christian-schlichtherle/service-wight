@@ -20,11 +20,11 @@ import java.lang.annotation.Target;
 public @interface ServiceImplementation {
 
     /**
-     * Returns the implemented specification classes.
+     * Returns the service interface classes.
      * If empty, all superclasses and implemented interfaces get scanned for
-     * {@link ServiceSpecification} annotations.
+     * {@link ServiceInterface} annotations.
      *
-     * @return The implemented specification classes.
+     * @return The service interface classes.
      */
     Class<?>[] value() default {};
 }

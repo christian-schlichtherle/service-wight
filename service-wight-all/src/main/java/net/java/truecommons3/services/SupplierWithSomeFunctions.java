@@ -4,24 +4,24 @@
  */
 package net.java.truecommons3.services;
 
-import javax.inject.Provider;
 import java.util.List;
+import java.util.function.Supplier;
 
 /** @author Christian Schlichtherle */
-class ProviderWithSomeFunctions<P> implements Provider<P> {
+class SupplierWithSomeFunctions<P> implements Supplier<P> {
 
-    private final Provider<P> provider;
+    private final Supplier<P> supplier;
     private final List<? extends Function<P>> functions;
 
-    ProviderWithSomeFunctions(final Provider<P> provider, final List<? extends Function<P>> functions) {
+    SupplierWithSomeFunctions(final Supplier<P> supplier, final List<? extends Function<P>> functions) {
         assert 0 != functions.size();
-        this.provider = provider;
+        this.supplier = supplier;
         this.functions = functions;
     }
 
     @Override
     public P get() {
-        P product = provider.get();
+        P product = supplier.get();
         for (Function<P> function : functions) {
             product = function.apply(product);
         }

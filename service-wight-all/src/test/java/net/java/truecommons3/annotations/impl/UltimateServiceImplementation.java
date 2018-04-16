@@ -5,7 +5,7 @@
 package net.java.truecommons3.annotations.impl;
 
 import net.java.truecommons3.annotations.ServiceImplementation;
-import net.java.truecommons3.annotations.spec.UltimateServiceSpecification;
+import net.java.truecommons3.annotations.api.UltimateServiceInterface;
 
 /**
  * You won't need no other!
@@ -15,5 +15,5 @@ import net.java.truecommons3.annotations.spec.UltimateServiceSpecification;
 @ServiceImplementation
 public final class UltimateServiceImplementation
 extends PartialServiceImplementation
-implements UltimateServiceSpecification
+implements UltimateServiceInterface
 { }

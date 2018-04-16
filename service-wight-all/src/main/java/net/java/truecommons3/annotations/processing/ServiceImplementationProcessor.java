@@ -22,7 +22,7 @@ import static javax.tools.Diagnostic.Kind.*;
 import static javax.tools.StandardLocation.*;
 
 import net.java.truecommons3.annotations.ServiceImplementation;
-import net.java.truecommons3.annotations.ServiceSpecification;
+import net.java.truecommons3.annotations.ServiceInterface;
 
 /**
  * Processes the {@link ServiceImplementation} annotation.
@@ -79,7 +79,7 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
                 if (valid(impl)) {
                     if (!processAnnotations(impl, registry)) {
                         if (!processTypeHierarchy(impl, registry)) {
-                            error("Cannot find any specification.", impl);
+                            error("Cannot find any service interface.", impl);
                         }
                     }
                 }
@@ -189,7 +189,7 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
             public Boolean visitDeclared(final DeclaredType type, final Void p) {
                 boolean found = false;
                 final TypeElement elem = (TypeElement) type.asElement();
-                if (null != elem.getAnnotation(ServiceSpecification.class)) {
+                if (null != elem.getAnnotation(ServiceInterface.class)) {
                     found = true;
                     registry.add(impl, elem);
                 }
@@ -208,25 +208,25 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
         final Elements elements = processingEnv.getElementUtils();
         final Map<TypeElement, Collection<TypeElement>> services = new HashMap<>();
 
-        void add(final TypeElement impl, final TypeElement spec) {
-            Collection<TypeElement> coll = services.get(spec);
+        void add(final TypeElement impl, final TypeElement iface) {
+            Collection<TypeElement> coll = services.get(iface);
             if (null == coll) {
                 coll = new TreeSet<>(TYPE_ELEMENT_COMPARATOR);
             }
             coll.add(impl);
-            services.put(spec, coll);
+            services.put(iface, coll);
         }
 
         void persist() {
             final Filer filer = processingEnv.getFiler();
             final Messager messager = getMessager();
             for (final Entry<TypeElement, Collection<TypeElement>> entry : services.entrySet()) {
-                final TypeElement spec = entry.getKey();
+                final TypeElement iface = entry.getKey();
                 final Collection<TypeElement> coll = entry.getValue();
                 if (coll.isEmpty()) {
                     continue;
                 }
-                final String path = "META-INF/services/" + name(spec);
+                final String path = "META-INF/services/" + name(iface);
                 try {
                     final FileObject fo = filer.createResource(CLASS_OUTPUT, "", path);
                     try (Writer w = fo.openWriter()) {

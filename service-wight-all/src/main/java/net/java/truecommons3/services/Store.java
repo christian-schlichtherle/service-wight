@@ -4,14 +4,14 @@
  */
 package net.java.truecommons3.services;
 
-import javax.inject.Provider;
+import java.util.function.Supplier;
 
 /** @author Christian Schlichtherle */
 final class Store<P> implements Container<P> {
 
     private final P product;
 
-    Store(final Provider<P> provider) { this.product = provider.get(); }
+    Store(final Supplier<P> supplier) { this.product = supplier.get(); }
 
     @Override public P get() { return product; }
 }

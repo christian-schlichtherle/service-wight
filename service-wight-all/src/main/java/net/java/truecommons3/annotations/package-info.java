@@ -4,13 +4,13 @@
  */
 /**
  * Provides annotations for
- * {@linkplain net.java.truecommons3.annotations.ServiceSpecification service specifications}
+ * {@linkplain net.java.truecommons3.annotations.ServiceInterface service interface}
  * and
  * {@linkplain net.java.truecommons3.annotations.ServiceImplementation service implementations}.
  * Using these annotations saves you from the tedious and error-prone process
  * of manually editing service provider configuration files in
  * {@code META-INF/services}
- * and enables some design-time error checking for your service specifications
+ * and enables some design-time error checking for your service interface
  * and implementations in your IDE.
  *
  * <h3>The {@code @ServiceImplementation} Annotation</h3>
@@ -50,40 +50,40 @@
  * of the implementation automatically updates the entry in the service
  * provider configuration file.
  *
- * <h3>The {@code @ServiceSpecification} Annotation</h3>
+ * <h3>The {@code @ServiceInterface} Annotation</h3>
  * <p>
- * Suppose you wanted to design your own specification class or interface.
- * Using the {@code @ServiceSpecification} annotation, your specification
- * could then look similar to this:
+ * Suppose you wanted to design your own service interface.
+ * Using the {@code @ServiceInterface} annotation, your service interface
+ * could then look like this:
  * <pre><code>
- * package com.company.project.spec;
+ * package com.company.project.api;
  *
- * import net.java.truecommons3.services.annotations.ServiceSpecification;
+ * import net.java.truecommons3.services.annotations.ServiceInterface;
  *
- * &#64;ServiceSpecification
- * public interface UltimateServiceSpecification {
+ * &#64;ServiceInterface
+ * public interface UltimateServiceInterface {
  *     ...
  * }
  * </code></pre>
  * <p>
  * The
- * {@linkplain net.java.truecommons3.annotations.processing.ServiceSpecificationProcessor processor}
- * associated with the {@code @ServiceSpecification} annotation will then
+ * {@linkplain net.java.truecommons3.annotations.processing.ServiceInterfaceProcessor processor}
+ * associated with the {@code @ServiceInterface} annotation will then
  * perform some static code analysis to detect any obvious errors and emit
- * appropriate error messages, e.g. if the specification class or interface is
+ * appropriate error messages, e.g. if the interface type is
  * non-public or final or if there is no public or protected constructor with
  * zero parameters available.
  * <p>
- * An implementation of your specification could then look like this:
+ * Your service implementation could then look like this:
  * <pre><code>
  * package com.company.project.impl;
  *
- * import com.company.project.spec.UltimateServiceSpecification;
- * import net.java.truecommons3.services.annotations.ServiceSpecification;
+ * import com.company.project.api.UltimateServiceInterface;
+ * import net.java.truecommons3.services.annotations.ServiceImplementation;
  *
  * &#64;ServiceImplementation
  * public class UltimateServiceImplementation
- * implements UltimateServiceSpecification {
+ * implements UltimateServiceInterface {
  *     ...
  * }
  * </code></pre>
@@ -93,9 +93,9 @@
  * The annotation processor associated with the {@code @ServiceImplementation}
  * annotation will then scan the type hierarchy of the annotated class for any
  * superclass or interface which is annotated with the
- * {@code @ServiceSpecification} annotation and generate the service provider
+ * {@code @ServiceInterface} annotation and generate the service provider
  * configuration files according to its findings.
- * If no specification class or interface is found then an appropriate error
+ * If no service interface is found then an appropriate error
  * message gets emitted.
  * <p>
  * Unless noted otherwise, this is a {@code null}-free API:
