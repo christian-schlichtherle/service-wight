@@ -4,11 +4,9 @@
  */
 package net.java.truecommons3.services;
 
-import javax.annotation.concurrent.Immutable;
 import javax.inject.Provider;
 
 /** @author Christian Schlichtherle */
-@Immutable
 final class Store<P> implements Container<P> {
 
     private final P product;

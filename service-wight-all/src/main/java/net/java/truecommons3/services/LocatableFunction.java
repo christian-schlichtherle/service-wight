@@ -4,8 +4,6 @@
  */
 package net.java.truecommons3.services;
 
-import javax.annotation.concurrent.Immutable;
-
 /**
  * A locatable function.
  * <p>
@@ -16,10 +14,8 @@ import javax.annotation.concurrent.Immutable;
  * <p>
  * Implementations should be thread-safe.
  *
- * @see    Locator
+ * @see    ServiceLocator
  * @param  <P> the type of the products to map.
  * @author Christian Schlichtherle
  */
-@Immutable
-public abstract class LocatableFunction<P>
-extends LocatableService implements Function<P> { }
+public abstract class LocatableFunction<P> extends LocatableService implements Function<P> { }

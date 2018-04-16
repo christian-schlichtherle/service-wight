@@ -6,7 +6,6 @@ package net.java.truecommons3.logging;
 
 import java.util.Formatter;
 import java.util.ResourceBundle;
-import javax.annotation.concurrent.Immutable;
 
 /**
  * Lazily resolves and formats localized messages for debugging or logging
@@ -14,7 +13,6 @@ import javax.annotation.concurrent.Immutable;
  * 
  * @author Christian Schlichtherle
  */
-@Immutable
 public class BundledMessage {
     private final ResourceBundle bundle;
     private final String key;

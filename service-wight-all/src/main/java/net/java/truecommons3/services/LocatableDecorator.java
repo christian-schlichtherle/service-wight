@@ -4,8 +4,6 @@
  */
 package net.java.truecommons3.services;
 
-import javax.annotation.concurrent.Immutable;
-
 /**
  * A locatable function for decorating products.
  * For best results, clients should create another abstract subclass which just
@@ -77,10 +75,8 @@ import javax.annotation.concurrent.Immutable;
  * <p>
  * Implementations should be thread-safe.
  *
- * @see    Locator
+ * @see    ServiceLocator
  * @param  <P> the type of the products to decorate.
  * @author Christian Schlichtherle
  */
-@Immutable
-public abstract class LocatableDecorator<P>
-extends LocatableFunction<P> implements Decorator<P> { }
+public abstract class LocatableDecorator<P> extends LocatableFunction<P> implements Decorator<P> { }

@@ -4,23 +4,22 @@
  */
 package net.java.truecommons3.services;
 
-import javax.annotation.concurrent.Immutable;
+import java.util.Locale;
 
 /**
  * A locatable service.
  *
- * @see    Locator
+ * @see    ServiceLocator
  * @author Christian Schlichtherle
  */
-@Immutable
 public abstract class LocatableService {
 
     /**
-     * Returns a priority to help {@link Locator}s to prioritize this object.
+     * Returns a priority to help {@link ServiceLocator}s to prioritize this object.
      * <p>
      * The implementation in the class {@link LocatableService} returns zero.
      *
-     * @return A priority to help {@link Locator}s to prioritize this object.
+     * @return A priority to help {@link ServiceLocator}s to prioritize this object.
      */
     public int getPriority() { return 0; }
 
@@ -30,8 +29,6 @@ public abstract class LocatableService {
      */
     @Override
     public String toString() {
-        return String.format("%s[priority=%d]",
-                getClass().getName(),
-                getPriority());
+        return String.format(Locale.ENGLISH, "%s[priority=%d]", getClass().getName(), getPriority());
     }
 }

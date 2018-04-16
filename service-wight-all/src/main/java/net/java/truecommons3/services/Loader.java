@@ -4,14 +4,12 @@
  */
 package net.java.truecommons3.services;
 
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.ServiceConfigurationError;
-import java.util.ServiceLoader;
+import java.util.*;
+
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
 
 /**
  * Loads resources and classes on the class path by using a given class loader
@@ -24,7 +22,6 @@ import java.util.ServiceLoader;
  *
  * @author Christian Schlichtherle
  */
-@Immutable
 public final class Loader {
 
     private final ClassLoader primary;
@@ -34,11 +31,11 @@ public final class Loader {
      * the current thread context's class loader unless the latter is identical
      * to the former.
      *
-     * @param loader the nullable primary class loader.
-     *        If this is {@code null}, then the system class loader is used.
+     * @param loader the optional primary class loader.
+     *        If this is empty, then the system class loader is used.
      */
-    public Loader(final @Nullable ClassLoader loader) {
-        this.primary = null != loader ? loader : ClassLoader.getSystemClassLoader();
+    public Loader(final Optional<ClassLoader> loader) {
+        this.primary = loader.orElseGet(() -> ClassLoader.getSystemClassLoader());
     }
 
     /**
@@ -92,7 +89,7 @@ public final class Loader {
      * Returns a new iterable collection of instances of all implementation
      * classes of the given specification class which are advertised as
      * services on the class path.
-     * This method should be preferred over {@link #instanceOf(Class, Class)}
+     * This method should be preferred over {@link #instanceOf(Class, Optional)}
      * if more than one meaningful implementation class of a specification
      * class is expected at run time.
      * <p>
@@ -105,12 +102,14 @@ public final class Loader {
      * @return A new iterable collection of all services on the class path.
      */
     public <S> Iterable<S> instancesOf(final Class<S> spec) {
-        final class IterableServices implements Iterable<S> {
+
+        class IterableServices implements Iterable<S> {
             @Override
             public Iterator<S> iterator() {
                 return ServiceLoader.load(spec, classLoader()).iterator();
             }
-        } // IterableServices
+        }
+
         return new IterableServices();
     }
 
@@ -146,19 +145,19 @@ public final class Loader {
      * @throws ServiceConfigurationError if loading or instantiating
      *         the implementation class fails for some reason.
      */
-    public @Nullable <S> S instanceOf(
-            final Class<S> spec,
-            final @Nullable Class<? extends S> impl)
+    public <S> Optional<S> instanceOf(final Class<S> spec, final Optional<Class<? extends S>> impl)
     throws ServiceConfigurationError {
-        final String name = System.getProperty(spec.getName(),
-                null == impl ? null : impl.getName());
-        if (null == name) return null;
-        try {
-            return impl.cast(classFor(name).newInstance());
-        } catch (final InstantiationException ex) {
-            throw new ServiceConfigurationError(ex.toString(), ex);
-        } catch (final IllegalAccessException ex) {
-            throw new ServiceConfigurationError(ex.toString(), ex);
+        final String name = System.getProperty(spec.getName(), impl.map(Class::getName).orElse(null));
+        if (null == name) {
+            return empty();
+        } else {
+            return impl.map(c -> {
+                try {
+                    return c.cast(classFor(name).newInstance());
+                } catch (final InstantiationException | IllegalAccessException e) {
+                    throw new ServiceConfigurationError(e.toString(), e);
+                }
+            });
         }
     }
 
@@ -216,25 +215,15 @@ public final class Loader {
      *         {@code object} is {@code null}.
      * @throws IllegalArgumentException if any promotion step fails.
      */
-    public static @Nullable <T> T promote(
-            @Nullable Object object,
-            final Class<T> type)
-    throws IllegalArgumentException {
+    public static <T> T promote(Object object, final Class<T> type) throws IllegalArgumentException {
         try {
             if (object instanceof String && !type.equals(String.class))
-                object = new Loader(type.getClassLoader())
-                        .classFor((String) object);
+                object = new Loader(ofNullable(type.getClassLoader())).classFor((String) object);
             if (object instanceof Class<?> && !type.equals(Class.class))
                 object = ((Class<?>) object).newInstance();
             return type.cast(object);
-        } catch (final ServiceConfigurationError ex) {
-            throw new IllegalArgumentException(ex);
-        } catch (final InstantiationException ex) {
-            throw new IllegalArgumentException(ex);
-        } catch (final IllegalAccessException ex) {
-            throw new IllegalArgumentException(ex);
-        } catch (final ClassCastException ex) {
-            throw new IllegalArgumentException(ex);
+        } catch (final ServiceConfigurationError | InstantiationException | IllegalAccessException | ClassCastException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 }

@@ -4,7 +4,6 @@
  */
 package net.java.truecommons3.services;
 
-import javax.annotation.concurrent.Immutable;
 import javax.inject.Provider;
 
 /**
@@ -16,10 +15,8 @@ import javax.inject.Provider;
  * <p>
  * Implementations should be thread-safe.
  *
- * @see    Locator
+ * @see    ServiceLocator
  * @param  <P> the type of the products to provide.
  * @author Christian Schlichtherle
  */
-@Immutable
-public abstract class LocatableProvider<P>
-extends LocatableService implements Provider<P> { }
+public abstract class LocatableProvider<P> extends LocatableService implements Provider<P> { }

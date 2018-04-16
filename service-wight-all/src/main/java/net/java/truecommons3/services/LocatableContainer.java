@@ -4,8 +4,6 @@
  */
 package net.java.truecommons3.services;
 
-import javax.annotation.concurrent.Immutable;
-
 /**
  * A locatable provider which contains a single product.
  * For best results, clients should create another abstract subclass which just
@@ -72,10 +70,8 @@ import javax.annotation.concurrent.Immutable;
  * <p>
  * Implementations should be thread-safe.
  *
- * @see    Locator
+ * @see    ServiceLocator
  * @param  <P> the type of the product to contain.
  * @author Christian Schlichtherle
  */
-@Immutable
-public abstract class LocatableContainer<P>
-extends LocatableProvider<P> implements Container<P> { }
+public abstract class LocatableContainer<P> extends LocatableProvider<P> implements Container<P> { }

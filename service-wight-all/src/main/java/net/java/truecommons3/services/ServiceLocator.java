@@ -10,10 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-import java.lang.reflect.Array;
 import java.util.*;
+
+import static java.util.Optional.*;
 
 /**
  * Creates containers or factories of products.
@@ -32,7 +31,7 @@ import java.util.*;
  * Otherwise the classes with the names contained in these resources get loaded
  * and instantiated by calling their public no-argument constructor.
  * Next, the instances are filtered according to their
- * {@linkplain Locatable#getPriority() priority}.
+ * {@linkplain LocatableService#getPriority() priority}.
  * Only the instance with the highest priority is kept for subsequent use.
  * <p>
  * Next, the class is searched again for any resources with the name
@@ -42,7 +41,7 @@ import java.util.*;
  * resources get loaded and instantiated by calling their public no-argument
  * constructor.
  * Next, the instances get sorted in ascending order of their
- * {@linkplain Locatable#getPriority() priority} and kept for subsequent use.
+ * {@linkplain LocatableService#getPriority() priority} and kept for subsequent use.
  * <p>
  * Finally, depending on the requesting method either a container or a factory
  * gets created which will use the instantiated provider and functions
@@ -51,7 +50,6 @@ import java.util.*;
  * @see    ServiceLoader
  * @author Christian Schlichtherle
  */
-@Immutable
 public final class ServiceLocator {
 
     private static final Logger logger = new LocalizedLogger(ServiceLocator.class);
@@ -66,9 +64,7 @@ public final class ServiceLocator {
      *
      * @param client the class which identifies the calling client.
      */
-    public ServiceLocator(final Class<?> client) {
-        this(client.getClassLoader());
-    }
+    public ServiceLocator(Class<?> client) { this(ofNullable(client.getClassLoader())); }
 
     /**
      * Constructs a new locator which uses the given class loader before using
@@ -80,9 +76,7 @@ public final class ServiceLocator {
      *        former.
      * @since TrueCommons 1.0.13
      */
-    public ServiceLocator(final ClassLoader loader) {
-        this.loader = new Loader(loader);
-    }
+    public ServiceLocator(final Optional<ClassLoader> loader) { this.loader = new Loader(loader); }
 
     /**
      * Creates a new factory for products.
@@ -93,9 +87,8 @@ public final class ServiceLocator {
      * @throws ServiceConfigurationError if loading or instantiating
      *         a located class fails for some reason.
      */
-    public <P> Factory<P> factory(Class<? extends LocatableFactory<P>> factory)
-    throws ServiceConfigurationError {
-        return factory(factory, null);
+    public <P> Factory<P> factory(Class<? extends LocatableFactory<P>> factory) throws ServiceConfigurationError {
+        return factory(factory, empty());
     }
 
     /**
@@ -108,15 +101,18 @@ public final class ServiceLocator {
      * @throws ServiceConfigurationError if loading or instantiating
      *         a located class fails for some reason.
      */
-    public <P> Factory<P> factory(
-            final Class<? extends LocatableFactory<P>> factory,
-            final @Nullable Class<? extends LocatableFunction<P>> functions)
-    throws ServiceConfigurationError {
+    public <P> Factory<P> factory(final Class<? extends LocatableFactory<P>> factory,
+                                  final Class<? extends LocatableFunction<P>> functions)
+            throws ServiceConfigurationError {
+        return factory(factory, of(functions));
+    }
+
+    private <P> Factory<P> factory(final Class<? extends LocatableFactory<P>> factory,
+                                   final Optional<Class<? extends LocatableFunction<P>>> functions)
+            throws ServiceConfigurationError {
         final LocatableFactory<P> p = provider(factory);
-        final LocatableFunction<P>[] f = null == functions ? null
-                : functions(functions);
-        return null == f || 0 == f.length ? p
-                : new FactoryWithSomeFunctions<P>(p, f);
+        final List<? extends LocatableFunction<P>> f = functions.map(this::functions).orElseGet(Collections::emptyList);
+        return f.isEmpty() ? p : new FactoryWithSomeFunctions<P>(p, f);
     }
 
     /**
@@ -129,8 +125,8 @@ public final class ServiceLocator {
      *         a located class fails for some reason.
      */
     public <P> Container<P> container(Class<? extends LocatableProvider<P>> provider)
-    throws ServiceConfigurationError {
-        return container(provider, null);
+            throws ServiceConfigurationError {
+        return container(provider, empty());
     }
 
     /**
@@ -143,57 +139,60 @@ public final class ServiceLocator {
      * @throws ServiceConfigurationError if loading or instantiating
      *         a located class fails for some reason.
      */
-    public <P> Container<P> container(
-            final Class<? extends LocatableProvider<P>> provider,
-            final @Nullable Class<? extends LocatableDecorator<P>> decorator)
-    throws ServiceConfigurationError {
-        final LocatableProvider<P> p = provider(provider);
-        final LocatableDecorator<P>[] d = null == decorator ? null
-                : functions(decorator);
-        return new Store<P>(null == d || 0 == d.length ? p
-                : new ProviderWithSomeFunctions<P>(p, d));
+    public <P> Container<P> container(Class<? extends LocatableProvider<P>> provider,
+                                      Class<? extends LocatableDecorator<P>> decorator)
+            throws ServiceConfigurationError {
+        return container(provider, of(decorator));
     }
 
-    private <S extends LocatableProvider<?>> S provider(final Class<S> spec)
-    throws ServiceConfigurationError {
-        S service = loader.instanceOf(spec, null);
-        if (null == service) {
+    private <P> Container<P> container(final Class<? extends LocatableProvider<P>> provider,
+                                       final Optional<Class<? extends LocatableDecorator<P>>> decorator)
+            throws ServiceConfigurationError {
+        final LocatableProvider<P> p = provider(provider);
+        final List<? extends LocatableDecorator<P>> d = decorator.map(this::functions).orElseGet(Collections::emptyList);
+        return new Store<P>(d.isEmpty() ? p : new ProviderWithSomeFunctions<P>(p, d));
+    }
+
+    private <S extends LocatableProvider<?>> S provider(final Class<S> spec) {
+        Optional<S> service = loader.instanceOf(spec, Optional.empty());
+        if (!service.isPresent()) {
             for (final S newService : loader.instancesOf(spec)) {
                 logger.debug(CONFIG, "located", newService);
-                if (null == service) {
-                    service = newService;
-                } else {
-                    final int op = service.getPriority();
+                if (service.isPresent()) {
+                    final int op = service.get().getPriority();
                     final int np = newService.getPriority();
                     if (op < np) {
-                        service = newService;
+                        service = of(newService);
                     } else if (op == np) {
                         // Mind you that the loader may return multiple class
                         // instances with an equal name which are loaded by
                         // different class loaders.
-                        if (!service.getClass().getName()
-                                .equals(newService.getClass().getName()))
-                            logger.warn("collision",
-                                    new Object[] { op, service, newService });
+                        if (!service.getClass().getName().equals(newService.getClass().getName()))
+                            logger.warn("collision", op, service.get(), newService);
                     }
+                } else {
+                    service = of(newService);
                 }
             }
         }
-        if (null == service)
+        if (service.isPresent()) {
+            logger.debug(CONFIG, "selecting", service);
+            return service.get();
+        } else {
             throw new ServiceConfigurationError(
                     new BundledMessage(ServiceLocator.class, "null", spec).toString());
-        logger.debug(CONFIG, "selecting", service);
-        return service;
+        }
     }
 
-    private <S extends LocatableFunction<?>> S[] functions(final Class<S> spec)
-    throws ServiceConfigurationError {
-        final Collection<S> c = new LinkedList<S>();
-        for (final S service : loader.instancesOf(spec)) c.add(service);
-        @SuppressWarnings("unchecked")
-        final S[] a = c.toArray((S[]) Array.newInstance(spec, c.size()));
-        Arrays.sort(a, new LocatableComparator());
-        for (final S service : a) logger.debug(CONFIG, "selecting", service);
-        return a;
+    private <S extends LocatableFunction<?>> List<S> functions(final Class<S> spec) {
+        final List<S> list = new ArrayList<S>();
+        for (final S service : loader.instancesOf(spec)) {
+            list.add(service);
+        }
+        list.sort(new LocatableComparator());
+        for (final S service : list) {
+            logger.debug(CONFIG, "selecting", service);
+        }
+        return list;
     }
 }

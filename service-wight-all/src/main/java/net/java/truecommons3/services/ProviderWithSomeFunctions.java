@@ -4,21 +4,17 @@
  */
 package net.java.truecommons3.services;
 
-import javax.annotation.concurrent.Immutable;
 import javax.inject.Provider;
+import java.util.List;
 
 /** @author Christian Schlichtherle */
-@Immutable
 class ProviderWithSomeFunctions<P> implements Provider<P> {
 
     private final Provider<P> provider;
-    private final Function<P>[] functions;
+    private final List<? extends Function<P>> functions;
 
-    ProviderWithSomeFunctions(
-            final Provider<P> provider,
-            final Function<P>[] functions) {
-        assert null != provider;
-        assert 0 != functions.length;
+    ProviderWithSomeFunctions(final Provider<P> provider, final List<? extends Function<P>> functions) {
+        assert 0 != functions.size();
         this.provider = provider;
         this.functions = functions;
     }
@@ -26,8 +22,9 @@ class ProviderWithSomeFunctions<P> implements Provider<P> {
     @Override
     public P get() {
         P product = provider.get();
-        for (Function<P> function : functions)
+        for (Function<P> function : functions) {
             product = function.apply(product);
+        }
         return product;
     }
 }

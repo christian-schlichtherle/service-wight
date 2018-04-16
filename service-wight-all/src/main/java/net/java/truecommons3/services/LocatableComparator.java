@@ -5,18 +5,15 @@
 package net.java.truecommons3.services;
 
 import java.util.Comparator;
-import javax.annotation.concurrent.Immutable;
 
 /**
  * Compares {@link LocatableService}s.
  *
  * @author Christian Schlichtherle
  */
-@Immutable
 class LocatableComparator implements Comparator<LocatableService> {
-    @Override public int compare(final LocatableService o1, final LocatableService o2) {
-        final int p1 = o1.getPriority();
-        final int p2 = o2.getPriority();
-        return p1 < p2 ? -1 : p1 == p2 ? 0 : 1;
+
+    public int compare(LocatableService o1, LocatableService o2) {
+        return Integer.compare(o1.getPriority(), o2.getPriority());
     }
 }
