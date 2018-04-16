@@ -4,8 +4,10 @@
  */
 package global.namespace.service.wight;
 
+import global.namespace.service.wight.function.Factory;
+
 /**
- * A locatable supplier which creates products on each request.
+ * A locatable provider which creates products on each request.
  * For best results, clients should create another abstract subclass which just
  * specifies the type parameter {@code P}.
  * In the following example the type parameter is specified as
@@ -74,4 +76,4 @@ package global.namespace.service.wight;
  * @param  <P> the type of the products to create.
  * @author Christian Schlichtherle
  */
-public abstract class LocatableFactory<P> extends LocatableSupplier<P> implements Factory<P> { }
+public abstract class LocatableFactory<P> extends LocatableProvider<P> implements Factory<P> { }

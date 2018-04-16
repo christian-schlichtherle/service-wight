@@ -4,12 +4,12 @@
  */
 package global.namespace.service.wight;
 
-import java.util.function.Supplier;
+import global.namespace.service.wight.function.Provider;
 
 /**
- * A locatable supplier.
+ * A locatable provider.
  * <p>
- * If multiple supplier classes get located on the class path at run time,
+ * If multiple provider classes get located on the class path at run time,
  * the instance with the greatest {@linkplain #getPriority() priority} gets
  * selected.
  * <p>
@@ -19,4 +19,4 @@ import java.util.function.Supplier;
  * @param  <P> the type of the products to provide.
  * @author Christian Schlichtherle
  */
-public abstract class LocatableSupplier<P> extends LocatableService implements Supplier<P> { }
+public abstract class LocatableProvider<P> extends LocatableService implements Provider<P> { }

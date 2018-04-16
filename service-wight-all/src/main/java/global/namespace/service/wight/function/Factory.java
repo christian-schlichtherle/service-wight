@@ -2,9 +2,7 @@
  * Copyright (C) 2005-2015 Schlichtherle IT Services.
  * All rights reserved. Use is subject to license terms.
  */
-package global.namespace.service.wight;
-
-import java.util.function.Supplier;
+package global.namespace.service.wight.function;
 
 /**
  * Creates products.
@@ -14,7 +12,8 @@ import java.util.function.Supplier;
  * @param  <P> the type of the products to create.
  * @author Christian Schlichtherle
  */
-public interface Factory<P> extends Supplier<P> {
+@FunctionalInterface
+public interface Factory<P> extends Provider<P> {
 
     /**
      * Returns a <em>new</em> product upon each call.

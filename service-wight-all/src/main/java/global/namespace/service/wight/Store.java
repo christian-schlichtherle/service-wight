@@ -4,14 +4,15 @@
  */
 package global.namespace.service.wight;
 
-import java.util.function.Supplier;
+import global.namespace.service.wight.function.Container;
+import global.namespace.service.wight.function.Provider;
 
 /** @author Christian Schlichtherle */
 final class Store<P> implements Container<P> {
 
     private final P product;
 
-    Store(final Supplier<P> supplier) { this.product = supplier.get(); }
+    Store(final Provider<P> provider) { this.product = provider.get(); }
 
-    @Override public P get() { return product; }
+    public P get() { return product; }
 }

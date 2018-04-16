@@ -7,6 +7,7 @@ package global.namespace.service.wight
 import java.util._
 
 import global.namespace.service.wight.ServiceLocatorSpec._
+import global.namespace.service.wight.function.{Container, Factory}
 import org.scalatest.Matchers._
 import org.scalatest._
 

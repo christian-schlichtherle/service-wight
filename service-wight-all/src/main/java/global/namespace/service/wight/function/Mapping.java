@@ -2,7 +2,7 @@
  * Copyright (C) 2005-2015 Schlichtherle IT Services.
  * All rights reserved. Use is subject to license terms.
  */
-package global.namespace.service.wight;
+package global.namespace.service.wight.function;
 
 /**
  * Maps products.
@@ -12,7 +12,8 @@ package global.namespace.service.wight;
  * @param  <P> the type of the products to map.
  * @author Christian Schlichtherle
  */
-public interface Function<P> {
+@FunctionalInterface
+public interface Mapping<P> {
 
     /**
      * Maps the given product.

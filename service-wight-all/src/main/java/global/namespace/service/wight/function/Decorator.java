@@ -2,7 +2,7 @@
  * Copyright (C) 2005-2015 Schlichtherle IT Services.
  * All rights reserved. Use is subject to license terms.
  */
-package global.namespace.service.wight;
+package global.namespace.service.wight.function;
 
 /**
  * Decorates products.
@@ -12,7 +12,8 @@ package global.namespace.service.wight;
  * @param  <P> the type of the products to decorate.
  * @author Christian Schlichtherle
  */
-public interface Decorator<P> extends Function<P> {
+@FunctionalInterface
+public interface Decorator<P> extends Mapping<P> {
 
     /**
      * Possibly decorates the given {@code product} and returns the result,

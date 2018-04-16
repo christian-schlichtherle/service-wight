@@ -4,10 +4,12 @@
  */
 package global.namespace.service.wight;
 
+import global.namespace.service.wight.function.Mapping;
+
 /**
- * A locatable function.
+ * A locatable service which maps products.
  * <p>
- * If multiple function classes get located on the class path at run time,
+ * If multiple mapping classes get located on the class path at run time,
  * the instances get applied in ascending order of their
  * {@linkplain #getPriority() priority} so that the result of the instance
  * with the greatest number becomes the result of the entire function chain.
@@ -18,4 +20,4 @@ package global.namespace.service.wight;
  * @param  <P> the type of the products to map.
  * @author Christian Schlichtherle
  */
-public abstract class LocatableFunction<P> extends LocatableService implements Function<P> { }
+public abstract class LocatableMapping<P> extends LocatableService implements Mapping<P> { }

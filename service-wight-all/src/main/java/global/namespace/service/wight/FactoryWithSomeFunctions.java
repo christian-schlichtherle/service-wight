@@ -4,12 +4,15 @@
  */
 package global.namespace.service.wight;
 
+import global.namespace.service.wight.function.Factory;
+import global.namespace.service.wight.function.Mapping;
+
 import java.util.List;
 
 /** @author Christian Schlichtherle */
-final class FactoryWithSomeFunctions<P> extends SupplierWithSomeFunctions<P> implements Factory<P> {
+final class FactoryWithSomeFunctions<P> extends ProviderWithSomeFunctions<P> implements Factory<P> {
 
-    FactoryWithSomeFunctions(Factory<P> factory, List<? extends Function<P>> functions) {
+    FactoryWithSomeFunctions(Factory<P> factory, List<? extends Mapping<P>> functions) {
         super(factory, functions);
     }
 }

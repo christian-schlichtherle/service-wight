@@ -4,8 +4,10 @@
  */
 package global.namespace.service.wight;
 
+import global.namespace.service.wight.function.Modifier;
+
 /**
- * A locatable function for modifying products.
+ * A locatable mapping for modifying products.
  * For best results, clients should create another abstract subclass which just
  * specifies the type parameter {@code P}.
  * The following example accompanies the example for {@link LocatableFactory},
@@ -79,4 +81,4 @@ package global.namespace.service.wight;
  * @param  <P> the type of the products to modify.
  * @author Christian Schlichtherle
  */
-public abstract class LocatableModifier<P> extends LocatableFunction<P> implements Modifier<P> { }
+public abstract class LocatableModifier<P> extends LocatableMapping<P> implements Modifier<P> { }

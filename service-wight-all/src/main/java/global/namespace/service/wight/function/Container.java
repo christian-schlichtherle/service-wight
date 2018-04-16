@@ -2,9 +2,7 @@
  * Copyright (C) 2005-2015 Schlichtherle IT Services.
  * All rights reserved. Use is subject to license terms.
  */
-package global.namespace.service.wight;
-
-import java.util.function.Supplier;
+package global.namespace.service.wight.function;
 
 /**
  * Contains a single product.
@@ -14,13 +12,10 @@ import java.util.function.Supplier;
  * @param  <P> the type of the product to contain.
  * @author Christian Schlichtherle
  */
-public interface Container<P> extends Supplier<P> {
+@FunctionalInterface
+public interface Container<P> extends Provider<P> {
 
-    /**
-     * Returns the <em>same</em> contained product upon each call.
-     *
-     * @return the <em>same</em> contained product.
-     */
+    /** Returns the <em>same</em> product on each call. */
     @Override
     P get();
 }
