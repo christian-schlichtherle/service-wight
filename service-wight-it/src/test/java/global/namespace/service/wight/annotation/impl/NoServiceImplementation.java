@@ -9,5 +9,4 @@ package global.namespace.service.wight.annotation.impl;
  *
  * @author Christian Schlichtherle
  */
-public class NoServiceImplementation extends PartialServiceImplementation
-{ }
+public class NoServiceImplementation extends PartialServiceImplementation { }

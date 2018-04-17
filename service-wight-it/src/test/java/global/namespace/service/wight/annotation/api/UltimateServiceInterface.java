@@ -12,5 +12,4 @@ import global.namespace.service.wight.annotation.ServiceInterface;
  * @author Christian Schlichtherle
  */
 @ServiceInterface
-public interface UltimateServiceInterface {
-}
+public interface UltimateServiceInterface { }

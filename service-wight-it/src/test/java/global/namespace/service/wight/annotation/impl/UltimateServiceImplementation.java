@@ -14,6 +14,5 @@ import global.namespace.service.wight.annotation.api.UltimateServiceInterface;
  */
 @ServiceImplementation
 public final class UltimateServiceImplementation
-extends PartialServiceImplementation
-implements UltimateServiceInterface
-{ }
+        extends PartialServiceImplementation
+        implements UltimateServiceInterface { }

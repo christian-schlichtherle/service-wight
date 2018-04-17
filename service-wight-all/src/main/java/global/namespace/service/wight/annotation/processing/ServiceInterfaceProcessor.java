@@ -36,15 +36,17 @@ public final class ServiceInterfaceProcessor extends ServiceAnnnotationProcessor
         return false; // critical!
     }
 
-    private boolean valid(final TypeElement iface) {
+    private void valid(final TypeElement iface) {
         {
             final Set<Modifier> modifiers = iface.getModifiers();
             if (!modifiers.contains(PUBLIC) || modifiers.contains(FINAL)) {
-                return error("Not a public and non-final class or interface.", iface);
+                error("Not a public and non-final class or interface.", iface);
+                return;
             }
             if (iface.getNestingKind().isNested()) {
                 if (!modifiers.contains(STATIC)) {
-                    return error("Impossible to implement outside of the lexical scope of the enclosing class.", iface);
+                    error("Impossible to implement outside of the lexical scope of the enclosing class.", iface);
+                    return;
                 }
                 warning("Bad practice: Not a top-level class or interface.", iface);
             }
@@ -55,8 +57,9 @@ public final class ServiceInterfaceProcessor extends ServiceAnnnotationProcessor
                 constructors.add((ExecutableElement) elem);
             }
         }
-        return constructors.isEmpty() || valid(constructors) ||
-                error("No public or protected constructor with zero parameters available.", iface);
+        if (!constructors.isEmpty() && !valid(constructors)) {
+            error("No public or protected constructor with zero parameters available.", iface);
+        }
     }
 
     private boolean valid(final Collection<ExecutableElement> constructors) {

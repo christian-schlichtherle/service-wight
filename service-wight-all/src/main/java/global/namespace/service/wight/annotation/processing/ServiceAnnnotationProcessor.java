@@ -16,26 +16,15 @@ import static javax.tools.Diagnostic.Kind.*;
  *
  * @author Christian Schlichtherle
  */
-public abstract class ServiceAnnnotationProcessor extends AbstractProcessor {
+abstract class ServiceAnnnotationProcessor extends AbstractProcessor {
 
-    boolean isDebugEnabled() {
-        return false;
-    }
+    final void debug(CharSequence msg, Element e) { getMessager().printMessage(NOTE, msg, e); }
 
-    final void debug(CharSequence msg, Element e) {
-        if (isDebugEnabled()) getMessager().printMessage(NOTE, msg, e);
-    }
+    final void warning(CharSequence message, Element e) { getMessager().printMessage(MANDATORY_WARNING, message, e); }
 
-    final void warning(CharSequence message, Element e) {
-        getMessager().printMessage(WARNING, message, e);
-    }
+    final void error(CharSequence message) { getMessager().printMessage(ERROR, message); }
 
-    final boolean error(final CharSequence message, final Element e) {
-        getMessager().printMessage(ERROR, message, e);
-        return false;
-    }
+    final void error(CharSequence message, Element e) { getMessager().printMessage(ERROR, message, e); }
 
-    final Messager getMessager() {
-        return processingEnv.getMessager();
-    }
+    private Messager getMessager() { return processingEnv.getMessager(); }
 }

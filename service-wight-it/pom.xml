@@ -44,7 +44,7 @@
                     <execution>
                         <id>default-testCompile</id>
                         <configuration>
-                            <compilerArgument>-Anet.java.truecommons.annotations.verbose=true</compilerArgument>
+                            <compilerArgument>-Xlint</compilerArgument>
                         </configuration>
                     </execution>
                 </executions>

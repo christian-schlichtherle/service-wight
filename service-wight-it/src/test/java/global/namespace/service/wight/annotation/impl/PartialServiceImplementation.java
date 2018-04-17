@@ -13,11 +13,8 @@ import global.namespace.service.wight.annotation.api.YetAnotherServiceInterface;
  * @author Christian Schlichtherle
  */
 @ServiceImplementation
-public class PartialServiceImplementation
-extends YetAnotherServiceInterface {
+public class PartialServiceImplementation extends YetAnotherServiceInterface {
 
     @ServiceImplementation
-    public static class BadPracticeImplementation
-    extends BadPracticeInterface {
-    }
+    public static class BadPracticeImplementation extends BadPracticeInterface { }
 }

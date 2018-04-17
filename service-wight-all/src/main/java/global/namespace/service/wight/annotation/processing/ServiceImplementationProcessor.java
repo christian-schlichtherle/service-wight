@@ -4,25 +4,31 @@
  */
 package global.namespace.service.wight.annotation.processing;
 
-import java.io.*;
-import java.util.*;
-import java.util.Map.Entry;
-import javax.annotation.processing.*;
-import javax.lang.model.*;
-import javax.lang.model.element.*;
-
-import static javax.lang.model.element.ElementKind.*;
-import static javax.lang.model.element.Modifier.*;
-
-import javax.lang.model.type.*;
-import javax.lang.model.util.*;
-import javax.tools.*;
-
-import static javax.tools.Diagnostic.Kind.*;
-import static javax.tools.StandardLocation.*;
-
 import global.namespace.service.wight.annotation.ServiceImplementation;
 import global.namespace.service.wight.annotation.ServiceInterface;
+
+import javax.annotation.processing.Filer;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.*;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.SimpleAnnotationValueVisitor6;
+import javax.lang.model.util.SimpleTypeVisitor6;
+import javax.tools.FileObject;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static java.util.Comparator.comparing;
+import static javax.lang.model.element.ElementKind.CLASS;
+import static javax.lang.model.element.ElementKind.CONSTRUCTOR;
+import static javax.lang.model.element.Modifier.*;
+import static javax.tools.StandardLocation.CLASS_OUTPUT;
 
 /**
  * Processes the {@link ServiceImplementation} annotation.
@@ -38,37 +44,10 @@ import global.namespace.service.wight.annotation.ServiceInterface;
  */
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 @SupportedAnnotationTypes("*")
-@SupportedOptions({
-        "net.java.truecommons3.annotations.verbose",
-        "net.java.truecommons3.annotations.processing.verbose"
-})
 public final class ServiceImplementationProcessor extends ServiceAnnnotationProcessor {
 
     private static final Comparator<TypeElement> TYPE_ELEMENT_COMPARATOR =
-            new Comparator<TypeElement>() {
-                @Override
-                public int compare(TypeElement o1, TypeElement o2) {
-                    return o1.getQualifiedName().toString().compareTo(o2.getQualifiedName().toString());
-                }
-            };
-
-    private boolean verbose;
-
-    @Override
-    public void init(final ProcessingEnvironment processingEnv) {
-        super.init(processingEnv);
-        final Set<String> supported = getSupportedOptions();
-        final Map<String, String> present = processingEnv.getOptions();
-        verbose = false;
-        for (String option : supported) {
-            verbose |= Boolean.parseBoolean(present.get(option));
-        }
-    }
-
-    @Override
-    boolean isDebugEnabled() {
-        return verbose;
-    }
+            comparing(o -> o.getQualifiedName().toString());
 
     @Override
     public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
@@ -97,11 +76,13 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
             if (!modifiers.contains(PUBLIC)
                     || modifiers.contains(ABSTRACT)
                     || impl.getKind() != CLASS) {
-                return error("Not a public and non-abstract class.", impl);
+                error("Not a public and non-abstract class.", impl);
+                return false;
             }
             if (impl.getNestingKind().isNested()) {
                 if (!modifiers.contains(STATIC)) {
-                    return error("Impossible to instantiate without an instance of the enclosing class.", impl);
+                    error("Impossible to instantiate without an instance of the enclosing class.", impl);
+                    return false;
                 }
             }
         }
@@ -111,8 +92,11 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
                 constructors.add((ExecutableElement) elem);
             }
         }
-        return constructors.isEmpty() || valid(constructors) ||
-                error("No public constructor with zero parameters available.", impl);
+        if (!constructors.isEmpty() && !valid(constructors)) {
+            error("No public constructor with zero parameters available.", impl);
+            return false;
+        }
+        return true;
     }
 
     private boolean valid(final Collection<ExecutableElement> ctors) {
@@ -124,7 +108,7 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
         return false;
     }
 
-    private boolean valid(final ExecutableElement ctor) {
+    private boolean valid(ExecutableElement ctor) {
         return ctor.getModifiers().contains(PUBLIC) && ctor.getParameters().isEmpty();
     }
 
@@ -147,9 +131,7 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
 
                 class Visitor extends SimpleAnnotationValueVisitor6<Boolean, Void> {
 
-                    Visitor() {
-                        super(false);
-                    }
+                    private Visitor() { super(false); }
 
                     @Override
                     public Boolean visitType(final TypeMirror type, final Void p) {
@@ -181,9 +163,7 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
 
         class Visitor extends SimpleTypeVisitor6<Boolean, Void> {
 
-            Visitor() {
-                super(false);
-            }
+            private Visitor() { super(false); }
 
             @Override
             public Boolean visitDeclared(final DeclaredType type, final Void p) {
@@ -219,30 +199,26 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
 
         void persist() {
             final Filer filer = processingEnv.getFiler();
-            final Messager messager = getMessager();
             for (final Entry<TypeElement, Collection<TypeElement>> entry : services.entrySet()) {
                 final TypeElement iface = entry.getKey();
                 final Collection<TypeElement> coll = entry.getValue();
-                if (coll.isEmpty()) {
-                    continue;
-                }
-                final String path = "META-INF/services/" + name(iface);
-                try {
-                    final FileObject fo = filer.createResource(CLASS_OUTPUT, "", path);
-                    try (Writer w = fo.openWriter()) {
-                        for (final TypeElement impl : coll) {
-                            w.append(name(impl)).append("\n");
-                            debug(String.format("Registered at: %s", path), impl);
+                if (!coll.isEmpty()) {
+                    final String path = "META-INF/services/" + name(iface);
+                    try {
+                        final FileObject fo = filer.createResource(CLASS_OUTPUT, "", path);
+                        try (Writer w = fo.openWriter()) {
+                            for (final TypeElement impl : coll) {
+                                w.append(name(impl)).append("\n");
+                                debug(String.format(Locale.ENGLISH, "Registered at: %s", path), impl);
+                            }
                         }
+                    } catch (IOException e) {
+                        error(String.format(Locale.ENGLISH, "Failed to register %d service implementation class(es) at: %s: %s", coll.size(), path, e.getMessage()));
                     }
-                } catch (final IOException ex) {
-                    messager.printMessage(ERROR, String.format("Failed to register %d service implementation class(es) at: %s: %s", coll.size(), path, ex.getMessage()));
                 }
             }
         }
 
-        CharSequence name(TypeElement elem) {
-            return elements.getBinaryName(elem);
-        }
+        CharSequence name(TypeElement elem) { return elements.getBinaryName(elem); }
     }
 }
