@@ -10,9 +10,7 @@ import global.namespace.service.wight.function.Mapping;
 import java.util.List;
 
 /** @author Christian Schlichtherle */
-final class FactoryWithSomeFunctions<P> extends ProviderWithSomeFunctions<P> implements Factory<P> {
+final class FactoryWithSomeMappings<P> extends ProviderWithSomeMappings<P> implements Factory<P> {
 
-    FactoryWithSomeFunctions(Factory<P> factory, List<? extends Mapping<P>> functions) {
-        super(factory, functions);
-    }
+    FactoryWithSomeMappings(Factory<P> factory, List<? extends Mapping<P>> mappings) { super(factory, mappings); }
 }

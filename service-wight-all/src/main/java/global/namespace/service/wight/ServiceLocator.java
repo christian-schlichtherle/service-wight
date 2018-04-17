@@ -87,30 +87,28 @@ public final class ServiceLocator {
      * @throws ServiceConfigurationError if loading or instantiating
      *         a located class fails for some reason.
      */
-    public <P> Factory<P> factory(Class<? extends LocatableFactory<P>> factory) {
-        return factory(factory, empty());
-    }
+    public <P> Factory<P> factory(Class<? extends LocatableFactory<P>> factory) { return factory(factory, empty()); }
 
     /**
      * Creates a new factory for products.
      *
      * @param  <P> the type of the products to create.
      * @param  factory the class of the locatable factory for the products.
-     * @param  functions the class of the locatable functions for the products.
+     * @param  mappings the class of the locatable mappings for the products.
      * @return A new factory of products.
      * @throws ServiceConfigurationError if loading or instantiating
      *         a located class fails for some reason.
      */
     public <P> Factory<P> factory(final Class<? extends LocatableFactory<P>> factory,
-                                  final Class<? extends LocatableMapping<P>> functions) {
-        return factory(factory, of(functions));
+                                  final Class<? extends LocatableMapping<P>> mappings) {
+        return factory(factory, of(mappings));
     }
 
     private <P> Factory<P> factory(final Class<? extends LocatableFactory<P>> factory,
-                                   final Optional<Class<? extends LocatableMapping<P>>> functions) {
+                                   final Optional<Class<? extends LocatableMapping<P>>> mappings) {
         final LocatableFactory<P> p = provider(factory);
-        final List<? extends LocatableMapping<P>> f = functions.map(this::functions).orElseGet(Collections::emptyList);
-        return f.isEmpty() ? p : new FactoryWithSomeFunctions<>(p, f);
+        final List<? extends LocatableMapping<P>> f = mappings.map(this::mappings).orElseGet(Collections::emptyList);
+        return f.isEmpty() ? p : new FactoryWithSomeMappings<>(p, f);
     }
 
     /**
@@ -144,8 +142,8 @@ public final class ServiceLocator {
     private <P> Container<P> container(final Class<? extends LocatableProvider<P>> provider,
                                        final Optional<Class<? extends LocatableDecorator<P>>> decorator) {
         final LocatableProvider<P> p = provider(provider);
-        final List<? extends LocatableDecorator<P>> d = decorator.map(this::functions).orElseGet(Collections::emptyList);
-        return new Store<>(d.isEmpty() ? p : new ProviderWithSomeFunctions<>(p, d));
+        final List<? extends LocatableDecorator<P>> d = decorator.map(this::mappings).orElseGet(Collections::emptyList);
+        return new Store<>(d.isEmpty() ? p : new ProviderWithSomeMappings<>(p, d));
     }
 
     private <S extends LocatableProvider<?>> S provider(final Class<S> iface) {
@@ -178,7 +176,7 @@ public final class ServiceLocator {
         }).orElseThrow(() -> new ServiceConfigurationError("No service located for " + iface + "."));
     }
 
-    private <S extends LocatableMapping<?>> List<S> functions(final Class<S> iface) {
+    private <S extends LocatableMapping<?>> List<S> mappings(final Class<S> iface) {
         final List<S> list = new ArrayList<>();
         loader.instancesOf(iface).forEach(list::add);
         list.sort(LOCATABLE_SERVICE_COMPARATOR);

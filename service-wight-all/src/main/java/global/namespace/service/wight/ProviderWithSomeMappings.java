@@ -10,21 +10,21 @@ import global.namespace.service.wight.function.Provider;
 import java.util.List;
 
 /** @author Christian Schlichtherle */
-class ProviderWithSomeFunctions<P> implements Provider<P> {
+class ProviderWithSomeMappings<P> implements Provider<P> {
 
     private final Provider<P> provider;
-    private final List<? extends Mapping<P>> functions;
+    private final List<? extends Mapping<P>> mappings;
 
-    ProviderWithSomeFunctions(final Provider<P> provider, final List<? extends Mapping<P>> functions) {
-        assert 0 != functions.size();
+    ProviderWithSomeMappings(final Provider<P> provider, final List<? extends Mapping<P>> mappings) {
+        assert 0 != mappings.size();
         this.provider = provider;
-        this.functions = functions;
+        this.mappings = mappings;
     }
 
     @Override
     public P get() {
         P product = provider.get();
-        for (Mapping<P> mapping : functions) {
+        for (Mapping<P> mapping : mappings) {
             product = mapping.apply(product);
         }
         return product;
