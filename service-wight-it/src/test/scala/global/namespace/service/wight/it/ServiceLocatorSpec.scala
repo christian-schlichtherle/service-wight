@@ -12,29 +12,29 @@ import global.namespace.service.wight.{LocatableDecorator, LocatableFactory, Ser
 import org.scalatest.Matchers._
 import org.scalatest._
 
+import scala.reflect.{ClassTag, classTag}
+
 /** @author Christian Schlichtherle */
 class ServiceLocatorSpec extends WordSpec {
 
-  def locator[P] = new LocatorSugar
+  val locator = new LocatorSugar
 
   "A locator" when {
-    val l = locator
-
     "asked to create a container" should {
       "report a service configuration error if it can't locate a factory" in {
         intercept[ServiceConfigurationError] {
-          l.container[String, UnlocatableFactory]
+          locator.container[String, UnlocatableFactory]
         }
       }
 
       "not report a service configuration error if it can't locate a decorator" in {
-        val container = l.container[String, LocatableFactory[String], UnlocatableDecorator]
+        val container = locator.container[String, LocatableFactory[String], UnlocatableDecorator]
         container.get should not be null
       }
     }
 
     "asked to create a container" should {
-      val container = l.container[String, LocatableFactory[String], LocatableDecorator[String]]
+      lazy val container = locator.container[String, LocatableFactory[String], LocatableDecorator[String]]
 
       "always reproduce the expected product" in {
         container.get shouldBe Expected
@@ -49,7 +49,7 @@ class ServiceLocatorSpec extends WordSpec {
     }
 
     "asked to create a factory" should {
-      val factory = l.factory[String, LocatableFactory[String], LocatableDecorator[String]]
+      lazy val factory = locator.factory[String, LocatableFactory[String], LocatableDecorator[String]]
 
       "always reproduce the expected product" in {
         factory.get shouldBe Expected
@@ -74,20 +74,21 @@ object ServiceLocatorSpec {
 
     private[this] val locator = new ServiceLocator(classOf[ServiceLocatorSpec])
 
-    def container[P, F <: LocatableFactory[P] : Manifest]: Container[P] =
-      locator container implicitly[Manifest[F]].runtimeClass.asInstanceOf[Class[F]]
+    def container[P, F <: LocatableFactory[P] : ClassTag]: Container[P] =
+      locator container runtimeClassOf[F]
 
-    def container[P, F <: LocatableFactory[P] : Manifest, D <: LocatableDecorator[P] : Manifest]: Container[P] =
-      locator container (implicitly[Manifest[F]].runtimeClass.asInstanceOf[Class[F]],
-                         implicitly[Manifest[D]].runtimeClass.asInstanceOf[Class[D]])
+    def container[P, F <: LocatableFactory[P] : ClassTag, D <: LocatableDecorator[P] : ClassTag]: Container[P] =
+      locator container (runtimeClassOf[F], runtimeClassOf[D])
 
-    def factory[P, F <: LocatableFactory[P] : Manifest]: Factory[P] =
-      locator factory implicitly[Manifest[F]].runtimeClass.asInstanceOf[Class[F]]
+    def factory[P, F <: LocatableFactory[P] : ClassTag]: Factory[P] =
+      locator factory runtimeClassOf[F]
 
-    def factory[P, F <: LocatableFactory[P] : Manifest, D <: LocatableDecorator[P] : Manifest]: Factory[P] =
-      locator factory (implicitly[Manifest[F]].runtimeClass.asInstanceOf[Class[F]],
-                       implicitly[Manifest[D]].runtimeClass.asInstanceOf[Class[D]])
+    def factory[P, F <: LocatableFactory[P] : ClassTag, D <: LocatableDecorator[P] : ClassTag]: Factory[P] =
+      locator factory (runtimeClassOf[F], runtimeClassOf[D])
+
+    private def runtimeClassOf[A](implicit tag: ClassTag[A]): Class[A] = {
+      require(tag != classTag[Nothing], "Missing type parameter.")
+      tag.runtimeClass.asInstanceOf[Class[A]]
+    }
   }
 }
-
-abstract class UnlocatableDecorator extends LocatableDecorator[String]

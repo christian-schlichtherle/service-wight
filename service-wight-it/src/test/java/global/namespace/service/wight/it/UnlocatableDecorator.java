@@ -4,6 +4,6 @@
  */
 package global.namespace.service.wight.it;
 
-import global.namespace.service.wight.LocatableFactory;
+import global.namespace.service.wight.LocatableDecorator;
 
-public abstract class UnlocatableFactory extends LocatableFactory<String> { }
+public abstract class UnlocatableDecorator extends LocatableDecorator<String> { }
