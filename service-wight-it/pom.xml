@@ -12,14 +12,27 @@
         <version>0.1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>service-wight-all</artifactId>
+    <artifactId>service-wight-it</artifactId>
 
-    <name>Service Wight All</name>
+    <name>Service Wight IT</name>
+
+    <properties>
+        <gpg.skip>true</gpg.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.install.skip>true</maven.install.skip>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <maven.source.skip>true</maven.source.skip>
+    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>global.namespace.service-wight</groupId>
+            <artifactId>service-wight-all</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
         </dependency>
     </dependencies>
 
@@ -29,9 +42,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>default-compile</id>
+                        <id>default-testCompile</id>
                         <configuration>
-                            <proc>none</proc>
+                            <compilerArgument>-Anet.java.truecommons.annotations.verbose=true</compilerArgument>
                         </configuration>
                     </execution>
                 </executions>

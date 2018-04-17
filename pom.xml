@@ -29,7 +29,18 @@
 
     <modules>
         <module>service-wight-all</module>
+        <module>service-wight-it</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>global.namespace.service-wight</groupId>
+                <artifactId>service-wight-all</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <pluginManagement>
@@ -48,22 +59,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <profiles>
-        <profile>
-            <id>non-transitive-test-sources-dependencies</id>
-            <activation>
-                <file>
-                    <exists>src/test</exists>
-                </file>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
 </project>
