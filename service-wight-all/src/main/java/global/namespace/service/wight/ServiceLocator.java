@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+import static java.util.Comparator.comparingInt;
 import static java.util.Optional.*;
 
 /**
@@ -48,6 +49,9 @@ import static java.util.Optional.*;
  * @author Christian Schlichtherle
  */
 public final class ServiceLocator {
+
+    private static final Comparator<LocatableService> LOCATABLE_SERVICE_COMPARATOR =
+            comparingInt(LocatableService::getPriority);
 
     private static final Logger log = LoggerFactory.getLogger(ServiceLocator.class);
 
@@ -106,7 +110,7 @@ public final class ServiceLocator {
                                    final Optional<Class<? extends LocatableMapping<P>>> functions) {
         final LocatableFactory<P> p = provider(factory);
         final List<? extends LocatableMapping<P>> f = functions.map(this::functions).orElseGet(Collections::emptyList);
-        return f.isEmpty() ? p : new FactoryWithSomeFunctions<P>(p, f);
+        return f.isEmpty() ? p : new FactoryWithSomeFunctions<>(p, f);
     }
 
     /**
@@ -141,7 +145,7 @@ public final class ServiceLocator {
                                        final Optional<Class<? extends LocatableDecorator<P>>> decorator) {
         final LocatableProvider<P> p = provider(provider);
         final List<? extends LocatableDecorator<P>> d = decorator.map(this::functions).orElseGet(Collections::emptyList);
-        return new Store<P>(d.isEmpty() ? p : new ProviderWithSomeFunctions<P>(p, d));
+        return new Store<>(d.isEmpty() ? p : new ProviderWithSomeFunctions<>(p, d));
     }
 
     private <S extends LocatableProvider<?>> S provider(final Class<S> iface) {
@@ -175,9 +179,9 @@ public final class ServiceLocator {
     }
 
     private <S extends LocatableMapping<?>> List<S> functions(final Class<S> iface) {
-        final List<S> list = new ArrayList<S>();
+        final List<S> list = new ArrayList<>();
         loader.instancesOf(iface).forEach(list::add);
-        list.sort(new LocatableComparator());
+        list.sort(LOCATABLE_SERVICE_COMPARATOR);
         list.forEach(service -> log.debug("Selecting {}.", service));
         return list;
     }

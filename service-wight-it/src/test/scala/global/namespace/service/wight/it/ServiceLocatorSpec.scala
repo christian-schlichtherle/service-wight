@@ -2,12 +2,13 @@
  * Copyright (C) 2005-2015 Schlichtherle IT Services.
  * All rights reserved. Use is subject to license terms.
  */
-package global.namespace.service.wight
+package global.namespace.service.wight.it
 
 import java.util._
 
-import global.namespace.service.wight.ServiceLocatorSpec._
 import global.namespace.service.wight.function.{Container, Factory}
+import global.namespace.service.wight.it.ServiceLocatorSpec._
+import global.namespace.service.wight.{LocatableDecorator, LocatableFactory, ServiceLocator}
 import org.scalatest.Matchers._
 import org.scalatest._
 
@@ -89,26 +90,4 @@ object ServiceLocatorSpec {
   }
 }
 
-abstract class UnlocatableFactory extends LocatableFactory[String]
 abstract class UnlocatableDecorator extends LocatableDecorator[String]
-
-final class World extends LocatableFactory[String] {
-
-  def get = new String("World") // return a new string upon each call
-  override def getPriority: Int = -1
-}
-
-final class Christian extends LocatableFactory[String] {
-  def get = new String("Christian") // return a new string upon each call
-}
-
-final class Salutation extends LocatableDecorator[String] {
-
-  def apply(text: String): String = "Hello %s!" format text
-  override def getPriority: Int = -1
-}
-
-final class Smalltalk extends LocatableDecorator[String] {
-
-  def apply(text: String): String = text + " How do you do?"
-}

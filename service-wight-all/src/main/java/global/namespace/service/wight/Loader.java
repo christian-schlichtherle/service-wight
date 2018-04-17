@@ -35,7 +35,7 @@ public final class Loader {
      *        If this is empty, then the system class loader is used.
      */
     public Loader(final Optional<ClassLoader> loader) {
-        this.primary = loader.orElseGet(() -> ClassLoader.getSystemClassLoader());
+        this.primary = loader.orElseGet(ClassLoader::getSystemClassLoader);
     }
 
     /**

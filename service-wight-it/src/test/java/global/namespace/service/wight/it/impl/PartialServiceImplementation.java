@@ -2,10 +2,10 @@
  * Copyright (C) 2005-2015 Schlichtherle IT Services.
  * All rights reserved. Use is subject to license terms.
  */
-package global.namespace.service.wight.annotation.impl;
+package global.namespace.service.wight.it.impl;
 
 import global.namespace.service.wight.annotation.ServiceImplementation;
-import global.namespace.service.wight.annotation.api.YetAnotherServiceInterface;
+import global.namespace.service.wight.it.api.YetAnotherServiceInterface;
 
 /**
  * Is this all?!

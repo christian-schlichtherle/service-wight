@@ -9,7 +9,7 @@ import java.util
 import java.util.Collections
 
 import org.scalatest.Matchers._
-import org.scalatest._
+import org.scalatest.WordSpec
 import org.scalatest.prop.PropertyChecks._
 
 import scala.collection.JavaConverters._
