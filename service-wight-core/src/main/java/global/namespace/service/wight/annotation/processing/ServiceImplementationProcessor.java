@@ -15,9 +15,7 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.SimpleAnnotationValueVisitor6;
-import javax.lang.model.util.SimpleTypeVisitor6;
+import javax.lang.model.util.*;
 import javax.tools.FileObject;
 import java.io.IOException;
 import java.io.Writer;
@@ -42,7 +40,7 @@ import static javax.tools.StandardLocation.CLASS_OUTPUT;
  * @author Christian Schlichtherle
  * @since TrueCommons 2.1
  */
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("*")
 public final class ServiceImplementationProcessor extends ServiceAnnnotationProcessor {
 
@@ -129,7 +127,7 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
                     continue;
                 }
 
-                class Visitor extends SimpleAnnotationValueVisitor6<Boolean, Void> {
+                class Visitor extends SimpleAnnotationValueVisitor8<Boolean, Void> {
 
                     private Visitor() { super(false); }
 
@@ -161,7 +159,7 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
 
     private boolean processTypeHierarchy(final TypeElement impl, final Registry registry) {
 
-        class Visitor extends SimpleTypeVisitor6<Boolean, Void> {
+        class Visitor extends SimpleTypeVisitor8<Boolean, Void> {
 
             private Visitor() { super(false); }
 
