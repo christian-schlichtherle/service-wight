@@ -17,7 +17,7 @@ public interface Provider<P> {
 
     /**
      * Provides a product.
-     * There is no requirement that a new or distinct product should be returned each time the provider is invoked.
+     * There is no requirement that a new or distinct product should be returned each time this provider is invoked.
      *
      * @return some product.
      */

@@ -6,8 +6,8 @@ package global.namespace.service.wight.it
 
 import java.util._
 
-import global.namespace.service.wight.ServiceLocator
-import global.namespace.service.wight.function.{Container, Decorator, Factory}
+import global.namespace.service.wight.{CompositeContainer, CompositeFactory, ServiceLocator}
+import global.namespace.service.wight.function._
 import global.namespace.service.wight.it.ServiceLocatorSpec._
 import org.scalatest.Matchers._
 import org.scalatest._
@@ -74,17 +74,17 @@ object ServiceLocatorSpec {
 
     private[this] val locator = new ServiceLocator()
 
-    def container[P, F <: Factory[P] : ClassTag]: Container[P] =
-      locator container runtimeClassOf[F]
+    def factory[P, FP <: Factory[P] : ClassTag]: CompositeFactory[P] =
+      locator.factory(runtimeClassOf[FP])
 
-    def container[P, F <: Factory[P] : ClassTag, D <: Decorator[P] : ClassTag]: Container[P] =
-      locator container (runtimeClassOf[F], runtimeClassOf[D])
+    def factory[P, FP <: Factory[P] : ClassTag, MP <: Mapping[P] : ClassTag]: CompositeFactory[P] =
+      locator.factory(runtimeClassOf[FP], runtimeClassOf[MP])
 
-    def factory[P, F <: Factory[P] : ClassTag]: Factory[P] =
-      locator factory runtimeClassOf[F]
+    def container[P, PP <: Provider[P] : ClassTag]: CompositeContainer[P] =
+      locator.container(runtimeClassOf[PP])
 
-    def factory[P, F <: Factory[P] : ClassTag, D <: Decorator[P] : ClassTag]: Factory[P] =
-      locator factory (runtimeClassOf[F], runtimeClassOf[D])
+    def container[P, PP <: Provider[P] : ClassTag, DP <: Decorator[P] : ClassTag]: CompositeContainer[P] =
+      locator.container(runtimeClassOf[PP], runtimeClassOf[DP])
 
     private def runtimeClassOf[A](implicit tag: ClassTag[A]): Class[A] = {
       require(tag != classTag[Nothing], "Missing type parameter.")
