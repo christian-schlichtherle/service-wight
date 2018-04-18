@@ -28,7 +28,7 @@
     </scm>
 
     <modules>
-        <module>service-wight-all</module>
+        <module>service-wight-core</module>
         <module>service-wight-it</module>
     </modules>
 
@@ -36,7 +36,7 @@
         <dependencies>
             <dependency>
                 <groupId>global.namespace.service-wight</groupId>
-                <artifactId>service-wight-all</artifactId>
+                <artifactId>service-wight-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

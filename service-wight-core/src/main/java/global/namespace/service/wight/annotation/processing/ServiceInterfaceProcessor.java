@@ -4,15 +4,22 @@
  */
 package global.namespace.service.wight.annotation.processing;
 
-import java.util.*;
-import javax.annotation.processing.*;
-import javax.lang.model.*;
-import javax.lang.model.element.*;
-
-import static javax.lang.model.element.ElementKind.*;
-import static javax.lang.model.element.Modifier.*;
-
 import global.namespace.service.wight.annotation.ServiceInterface;
+
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Set;
+
+import static javax.lang.model.element.ElementKind.CONSTRUCTOR;
+import static javax.lang.model.element.Modifier.*;
 
 /**
  * Processes the {@link ServiceInterface} annotation.

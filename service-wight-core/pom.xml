@@ -12,16 +12,9 @@
         <version>0.1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>service-wight-all</artifactId>
+    <artifactId>service-wight-core</artifactId>
 
-    <name>Service Wight All</name>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-    </dependencies>
+    <name>Service Wight Core</name>
 
     <build>
         <plugins>

@@ -72,7 +72,7 @@ object ServiceLocatorSpec {
 
   final class LocatorSugar {
 
-    private[this] val locator = new ServiceLocator(classOf[ServiceLocatorSpec])
+    private[this] val locator = new ServiceLocator()
 
     def container[P, F <: LocatableFactory[P] : ClassTag]: Container[P] =
       locator container runtimeClassOf[F]

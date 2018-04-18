@@ -27,12 +27,7 @@
     <dependencies>
         <dependency>
             <groupId>global.namespace.service-wight</groupId>
-            <artifactId>service-wight-all</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
+            <artifactId>service-wight-core</artifactId>
         </dependency>
     </dependencies>
 
