@@ -1,10 +1,10 @@
 package global.namespace.service.wight.it;
 
-import global.namespace.service.wight.LocatableFactory;
 import global.namespace.service.wight.annotation.ServiceImplementation;
+import global.namespace.service.wight.function.Factory;
 
-@ServiceImplementation(LocatableFactory.class)
-public final class Christian extends LocatableFactory<String> {
+@ServiceImplementation(Factory.class)
+public final class Christian implements Factory<String> {
 
     @SuppressWarnings("RedundantStringConstructorCall")
     public String get() { return new String("Christian"); }

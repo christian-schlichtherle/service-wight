@@ -4,8 +4,8 @@
  */
 package global.namespace.service.wight;
 
-import global.namespace.service.wight.function.Container;
-import global.namespace.service.wight.function.Factory;
+import global.namespace.service.wight.annotation.ServiceImplementation;
+import global.namespace.service.wight.function.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -30,7 +30,7 @@ import static java.util.Optional.*;
  * Otherwise the classes with the names contained in these resources get loaded
  * and instantiated by calling their public no-argument constructor.
  * Next, the instances are filtered according to their
- * {@linkplain LocatableService#getPriority() priority}.
+ * {@linkplain ServiceImplementation#priority() priority}.
  * Only the instance with the highest priority is kept for subsequent use.
  * <p>
  * Next, the class is searched again for any resources with the name
@@ -40,7 +40,7 @@ import static java.util.Optional.*;
  * resources get loaded and instantiated by calling their public no-argument
  * constructor.
  * Next, the instances get sorted in ascending order of their
- * {@linkplain LocatableService#getPriority() priority} and kept for subsequent use.
+ * {@linkplain ServiceImplementation#priority() priority} and kept for subsequent use.
  * <p>
  * Finally, depending on the requesting method either a container or a factory gets created which will use the
  * instantiated provider and mappings to obtain a product and map it in order of their priorities.
@@ -51,11 +51,12 @@ import static java.util.Optional.*;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public final class ServiceLocator {
 
-    private static final Comparator<LocatableService> LOCATABLE_MAPPING_COMPARATOR =
-            comparingInt(LocatableService::getPriority);
+    private static final Comparator<Mapping<?>> MAPPING_COMPARATOR =
+            comparingInt(mapping -> mapping.getClass().getDeclaredAnnotation(ServiceImplementation.class).priority());
 
-    private static final Comparator<LocatableService> LOCATABLE_PROVIDER_COMPARATOR =
-            LOCATABLE_MAPPING_COMPARATOR.reversed();
+    private static final Comparator<Provider<?>> PROVIDER_COMPARATOR =
+            comparingInt((Provider<?> provider) -> provider.getClass().getDeclaredAnnotation(ServiceImplementation.class).priority())
+                    .reversed();
 
     private final Optional<ClassLoader> classLoader;
 
@@ -74,7 +75,7 @@ public final class ServiceLocator {
      * @throws ServiceConfigurationError if loading or instantiating
      *         a located class fails for some reason.
      */
-    public <P> Factory<P> factory(Class<? extends LocatableFactory<P>> factory) { return factory(factory, empty()); }
+    public <P> Factory<P> factory(Class<? extends Factory<P>> factory) { return factory(factory, empty()); }
 
     /**
      * Creates a new factory for products.
@@ -86,22 +87,20 @@ public final class ServiceLocator {
      * @throws ServiceConfigurationError if loading or instantiating
      *         a located class fails for some reason.
      */
-    public <P> Factory<P> factory(Class<? extends LocatableFactory<P>> factory,
-                                  Class<? extends LocatableMapping<P>> mapping) {
+    public <P> Factory<P> factory(Class<? extends Factory<P>> factory, Class<? extends Mapping<P>> mapping) {
         return factory(factory, of(mapping));
     }
 
-    private <P> Factory<P> factory(Class<? extends LocatableFactory<P>> factory,
-                                   Optional<Class<? extends LocatableMapping<P>>> mapping) {
+    private <P> Factory<P> factory(Class<? extends Factory<P>> factory, Optional<Class<? extends Mapping<P>>> mapping) {
         return factory(factory, mapping, (f, m) -> {
-            final LocatableFactory<P> f0 = f.get(0);
+            final Factory<P> f0 = f.get(0);
             return m.isEmpty() ? f0 : new FactoryWithSomeMappings<>(f0, m);
         });
     }
 
-    private <P, C> C factory(Class<? extends LocatableFactory<P>> factory,
-                             Optional<Class<? extends LocatableMapping<P>>> mapping,
-                             BiFunction<List<? extends LocatableFactory<P>>, List<? extends LocatableMapping<P>>, C> combinator) {
+    private <P, C> C factory(Class<? extends Factory<P>> factory,
+                             Optional<Class<? extends Mapping<P>>> mapping,
+                             BiFunction<List<? extends Factory<P>>, List<? extends Mapping<P>>, C> combinator) {
         return combinator.apply(providers(factory), mapping.map(this::mappings).orElseGet(Collections::emptyList));
     }
 
@@ -114,9 +113,7 @@ public final class ServiceLocator {
      * @throws ServiceConfigurationError if loading or instantiating
      *         a located class fails for some reason.
      */
-    public <P> Container<P> container(Class<? extends LocatableProvider<P>> provider) {
-        return container(provider, empty());
-    }
+    public <P> Container<P> container(Class<? extends Provider<P>> provider) { return container(provider, empty()); }
 
     /**
      * Creates a new container with a single product.
@@ -128,29 +125,28 @@ public final class ServiceLocator {
      * @throws ServiceConfigurationError if loading or instantiating
      *         a located class fails for some reason.
      */
-    public <P> Container<P> container(Class<? extends LocatableProvider<P>> provider,
-                                      Class<? extends LocatableDecorator<P>> decorator) {
+    public <P> Container<P> container(Class<? extends Provider<P>> provider, Class<? extends Decorator<P>> decorator) {
         return container(provider, of(decorator));
     }
 
-    private <P> Container<P> container(Class<? extends LocatableProvider<P>> provider,
-                                       Optional<Class<? extends LocatableDecorator<P>>> decorator) {
+    private <P> Container<P> container(Class<? extends Provider<P>> provider,
+                                       Optional<Class<? extends Decorator<P>>> decorator) {
         return container(provider, decorator, (p, d) -> {
-            final LocatableProvider<P> p0 = p.get(0);
+            final Provider<P> p0 = p.get(0);
             return new Store<>(d.isEmpty() ? p0 : new ProviderWithSomeMappings<>(p0, d));
         });
     }
 
-    private <P, C> C container(Class<? extends LocatableProvider<P>> provider,
-                               Optional<Class<? extends LocatableDecorator<P>>> decorator,
-                               BiFunction<List<? extends LocatableProvider<P>>, List<? extends LocatableDecorator<P>>, C> combinator) {
+    private <P, C> C container(Class<? extends Provider<P>> provider,
+                               Optional<Class<? extends Decorator<P>>> decorator,
+                               BiFunction<List<? extends Provider<P>>, List<? extends Decorator<P>>, C> combinator) {
         return combinator.apply(providers(provider), decorator.map(this::mappings).orElseGet(Collections::emptyList));
     }
 
-    private <S extends LocatableProvider<?>> List<S> providers(final Class<S> service) {
+    private <S extends Provider<?>> List<S> providers(final Class<S> service) {
         final List<S> providers = new ArrayList<>();
         instancesOf(service).forEach(providers::add);
-        providers.sort(LOCATABLE_PROVIDER_COMPARATOR);
+        providers.sort(PROVIDER_COMPARATOR);
         instanceOf(service, empty()).map(s -> {
             providers.add(0, s);
             return null;
@@ -161,10 +157,10 @@ public final class ServiceLocator {
         return providers;
     }
 
-    private <S extends LocatableMapping<?>> List<S> mappings(final Class<S> service) {
+    private <S extends Mapping<?>> List<S> mappings(final Class<S> service) {
         final List<S> mappings = new ArrayList<>();
         instancesOf(service).forEach(mappings::add);
-        mappings.sort(LOCATABLE_MAPPING_COMPARATOR);
+        mappings.sort(MAPPING_COMPARATOR);
         return mappings;
     }
 

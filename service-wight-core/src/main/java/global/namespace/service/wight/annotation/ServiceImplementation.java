@@ -4,9 +4,7 @@
  */
 package global.namespace.service.wight.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Indicates that the annotated class implements a locatable service.
@@ -17,6 +15,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Documented
+@Retention(RetentionPolicy.RUNTIME)
 public @interface ServiceImplementation {
 
     /**
@@ -27,4 +26,6 @@ public @interface ServiceImplementation {
      * @return The service interface classes.
      */
     Class<?>[] value() default {};
+
+    int priority() default 0;
 }

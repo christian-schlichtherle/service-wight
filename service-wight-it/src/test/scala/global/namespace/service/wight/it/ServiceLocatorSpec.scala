@@ -6,9 +6,9 @@ package global.namespace.service.wight.it
 
 import java.util._
 
-import global.namespace.service.wight.function.{Container, Factory}
+import global.namespace.service.wight.ServiceLocator
+import global.namespace.service.wight.function.{Container, Decorator, Factory}
 import global.namespace.service.wight.it.ServiceLocatorSpec._
-import global.namespace.service.wight.{LocatableDecorator, LocatableFactory, ServiceLocator}
 import org.scalatest.Matchers._
 import org.scalatest._
 
@@ -28,13 +28,13 @@ class ServiceLocatorSpec extends WordSpec {
       }
 
       "not report a service configuration error if it can't locate a decorator" in {
-        val container = locator.container[String, LocatableFactory[String], UnlocatableDecorator]
+        val container = locator.container[String, Factory[String], UnlocatableDecorator]
         container.get should not be null
       }
     }
 
     "asked to create a container" should {
-      lazy val container = locator.container[String, LocatableFactory[String], LocatableDecorator[String]]
+      lazy val container = locator.container[String, Factory[String], Decorator[String]]
 
       "always reproduce the expected product" in {
         container.get shouldBe Expected
@@ -49,7 +49,7 @@ class ServiceLocatorSpec extends WordSpec {
     }
 
     "asked to create a factory" should {
-      lazy val factory = locator.factory[String, LocatableFactory[String], LocatableDecorator[String]]
+      lazy val factory = locator.factory[String, Factory[String], Decorator[String]]
 
       "always reproduce the expected product" in {
         factory.get shouldBe Expected
@@ -74,16 +74,16 @@ object ServiceLocatorSpec {
 
     private[this] val locator = new ServiceLocator()
 
-    def container[P, F <: LocatableFactory[P] : ClassTag]: Container[P] =
+    def container[P, F <: Factory[P] : ClassTag]: Container[P] =
       locator container runtimeClassOf[F]
 
-    def container[P, F <: LocatableFactory[P] : ClassTag, D <: LocatableDecorator[P] : ClassTag]: Container[P] =
+    def container[P, F <: Factory[P] : ClassTag, D <: Decorator[P] : ClassTag]: Container[P] =
       locator container (runtimeClassOf[F], runtimeClassOf[D])
 
-    def factory[P, F <: LocatableFactory[P] : ClassTag]: Factory[P] =
+    def factory[P, F <: Factory[P] : ClassTag]: Factory[P] =
       locator factory runtimeClassOf[F]
 
-    def factory[P, F <: LocatableFactory[P] : ClassTag, D <: LocatableDecorator[P] : ClassTag]: Factory[P] =
+    def factory[P, F <: Factory[P] : ClassTag, D <: Decorator[P] : ClassTag]: Factory[P] =
       locator factory (runtimeClassOf[F], runtimeClassOf[D])
 
     private def runtimeClassOf[A](implicit tag: ClassTag[A]): Class[A] = {

@@ -1,14 +1,11 @@
 package global.namespace.service.wight.it;
 
-import global.namespace.service.wight.LocatableFactory;
 import global.namespace.service.wight.annotation.ServiceImplementation;
+import global.namespace.service.wight.function.Factory;
 
-@ServiceImplementation(LocatableFactory.class)
-public final class World extends LocatableFactory<String> {
+@ServiceImplementation(value = Factory.class, priority = -1)
+public final class World implements Factory<String> {
 
     @SuppressWarnings("RedundantStringConstructorCall")
     public String get() { return new String("World"); }
-
-    @Override
-    public int getPriority() { return -1; }
 }
