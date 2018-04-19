@@ -7,11 +7,11 @@ package global.namespace.service.wight.it
 import java.util.Collections.reverse
 import java.util.ServiceConfigurationError
 
-import global.namespace.service.wight.function._
+import global.namespace.service.wight.core.function._
+import global.namespace.service.wight.core.{CompositeProvider, ServiceLocator}
 import global.namespace.service.wight.it.ServiceLocatorSpec._
 import global.namespace.service.wight.it.case1.{UnlocatableMapping, UnlocatableProvider}
 import global.namespace.service.wight.it.case2.{Salutation, Subject}
-import global.namespace.service.wight.{CompositeProvider, ServiceLocator}
 import org.scalatest.Matchers._
 import org.scalatest._
 

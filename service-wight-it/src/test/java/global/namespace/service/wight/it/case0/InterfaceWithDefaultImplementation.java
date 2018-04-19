@@ -4,8 +4,8 @@
  */
 package global.namespace.service.wight.it.case0;
 
-import global.namespace.service.wight.annotation.ServiceImplementation;
-import global.namespace.service.wight.annotation.ServiceInterface;
+import global.namespace.service.wight.core.annotation.ServiceImplementation;
+import global.namespace.service.wight.core.annotation.ServiceInterface;
 
 /** @author Christian Schlichtherle */
 @ServiceInterface

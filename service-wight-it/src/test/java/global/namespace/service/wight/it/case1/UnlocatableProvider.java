@@ -4,6 +4,6 @@
  */
 package global.namespace.service.wight.it.case1;
 
-import global.namespace.service.wight.function.Provider;
+import global.namespace.service.wight.core.function.Provider;
 
 public abstract class UnlocatableProvider implements Provider<String> { }

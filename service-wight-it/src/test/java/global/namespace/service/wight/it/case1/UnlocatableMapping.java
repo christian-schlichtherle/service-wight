@@ -4,6 +4,6 @@
  */
 package global.namespace.service.wight.it.case1;
 
-import global.namespace.service.wight.function.Mapping;
+import global.namespace.service.wight.core.function.Mapping;
 
 public abstract class UnlocatableMapping implements Mapping<String> { }

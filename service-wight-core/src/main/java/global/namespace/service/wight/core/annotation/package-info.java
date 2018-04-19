@@ -4,9 +4,9 @@
  */
 /**
  * Provides annotations for
- * {@linkplain global.namespace.service.wight.annotation.ServiceInterface service interface}
+ * {@linkplain global.namespace.service.wight.core.annotation.ServiceInterface service interface}
  * and
- * {@linkplain global.namespace.service.wight.annotation.ServiceImplementation service implementations}.
+ * {@linkplain global.namespace.service.wight.core.annotation.ServiceImplementation service implementations}.
  * Using these annotations saves you from the tedious and error-prone process
  * of manually editing service provider configuration files in
  * {@code META-INF/services}
@@ -32,7 +32,7 @@
  * </code></pre>
  * <p>
  * The
- * {@linkplain global.namespace.service.wight.annotation.processing.ServiceImplementationProcessor processor}
+ * {@linkplain global.namespace.service.wight.core.annotation.processing.ServiceImplementationProcessor processor}
  * associated with the {@code @ServiceImplementation} annotation will then
  * generate the service provider configuration file
  * {@code META-INF/services/java.nio.charset.spi.CharsetProvider}
@@ -67,7 +67,7 @@
  * </code></pre>
  * <p>
  * The
- * {@linkplain global.namespace.service.wight.annotation.processing.ServiceInterfaceProcessor processor}
+ * {@linkplain global.namespace.service.wight.core.annotation.processing.ServiceInterfaceProcessor processor}
  * associated with the {@code @ServiceInterface} annotation will then
  * perform some static code analysis to detect any obvious errors and emit
  * appropriate error messages, e.g. if the interface type is
@@ -109,4 +109,4 @@
  * @since  TrueCommons 2.1
  * @author Christian Schlichtherle
  */
-package global.namespace.service.wight.annotation;
+package global.namespace.service.wight.core.annotation;

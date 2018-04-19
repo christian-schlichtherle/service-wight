@@ -4,9 +4,9 @@
  */
 /**
  * Provides annotation processors for
- * {@linkplain global.namespace.service.wight.annotation.processing.ServiceInterfaceProcessor service interfaces}
+ * {@linkplain global.namespace.service.wight.core.annotation.processing.ServiceInterfaceProcessor service interfaces}
  * and
- * {@linkplain global.namespace.service.wight.annotation.processing.ServiceImplementationProcessor service implementations}.
+ * {@linkplain global.namespace.service.wight.core.annotation.processing.ServiceImplementationProcessor service implementations}.
  * These processors are configured in
  * {@code META-INF/services/javax.annotation.processing.Processor}, so you
  * normally don't need to set the annotation processor path when invoking
@@ -21,4 +21,4 @@
  * @since  TrueCommons 2.1
  * @author Christian Schlichtherle
  */
-package global.namespace.service.wight.annotation.processing;
+package global.namespace.service.wight.core.annotation.processing;

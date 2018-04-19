@@ -8,13 +8,13 @@
 
     <parent>
         <groupId>global.namespace.service-wight</groupId>
-        <artifactId>service-wight-parent</artifactId>
+        <artifactId>service-wight</artifactId>
         <version>0.3.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>service-wight</artifactId>
+    <artifactId>service-wight-core</artifactId>
 
-    <name>Service Wight</name>
+    <name>Service Wight Core</name>
 
     <build>
         <plugins>

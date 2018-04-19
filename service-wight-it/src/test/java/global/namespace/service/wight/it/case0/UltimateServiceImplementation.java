@@ -4,7 +4,7 @@
  */
 package global.namespace.service.wight.it.case0;
 
-import global.namespace.service.wight.annotation.ServiceImplementation;
+import global.namespace.service.wight.core.annotation.ServiceImplementation;
 
 /**
  * You won't need no other!

@@ -2,11 +2,11 @@
  * Copyright (C) 2005-2015 Schlichtherle IT Services.
  * All rights reserved. Use is subject to license terms.
  */
-package global.namespace.service.wight;
+package global.namespace.service.wight.core;
 
-import global.namespace.service.wight.annotation.ServiceImplementation;
-import global.namespace.service.wight.function.Mapping;
-import global.namespace.service.wight.function.Provider;
+import global.namespace.service.wight.core.annotation.ServiceImplementation;
+import global.namespace.service.wight.core.function.Mapping;
+import global.namespace.service.wight.core.function.Provider;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;

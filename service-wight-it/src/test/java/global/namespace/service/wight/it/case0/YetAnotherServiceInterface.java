@@ -4,7 +4,7 @@
  */
 package global.namespace.service.wight.it.case0;
 
-import global.namespace.service.wight.annotation.ServiceInterface;
+import global.namespace.service.wight.core.annotation.ServiceInterface;
 
 /**
  * Yet another service interface.

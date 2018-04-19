@@ -17,7 +17,7 @@ In Maven:
 ```xml
 <dependency>
     <groupId>global.namespace.service-wight</groupId>
-    <artifactId>service-wight</artifactId>
+    <artifactId>service-wight-core</artifactId>
     <version>0.3.0</version>
 </dependency>
 ```
@@ -27,13 +27,13 @@ In Maven:
 For writing service interfaces:
 
 ```java
-import global.namespace.service.wight.function.*;
+import global.namespace.service.wight.core.function.*;
 ```
 
 For making service implementations locatable:
 
 ```java
-import global.namespace.service.wight.annotation.*;
+import global.namespace.service.wight.core.annotation.*;
 ```
 
 For using the service locator and its results:
