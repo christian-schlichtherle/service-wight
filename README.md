@@ -39,7 +39,7 @@ import global.namespace.service.wight.core.annotation.*;
 For using the service locator and its results:
 
 ```java
-import global.namespace.service.wight.*;
+import global.namespace.service.wight.core.*;
 ```
 
 ### Defining And Implementing A Locatable Service Provider
