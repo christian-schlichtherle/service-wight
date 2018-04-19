@@ -1,4 +1,4 @@
-package global.namespace.service.wight.it.impl;
+package global.namespace.service.wight.it.case0;
 
 import global.namespace.service.wight.annotation.ServiceImplementation;
 

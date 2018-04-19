@@ -8,6 +8,8 @@ import java.util._
 
 import global.namespace.service.wight.function._
 import global.namespace.service.wight.it.ServiceLocatorSpec._
+import global.namespace.service.wight.it.case1.{UnlocatableMapping, UnlocatableProvider}
+import global.namespace.service.wight.it.case2.{Salutation, Subject}
 import global.namespace.service.wight.{CompositeProvider, ServiceLocator}
 import org.scalatest.Matchers._
 import org.scalatest._
@@ -28,13 +30,12 @@ class ServiceLocatorSpec extends WordSpec {
       }
 
       "not report a service configuration error if it can't locate a decorator" in {
-        val provider = locator.provider[String, Provider[String], UnlocatableMapping]
-        provider.get should not be null
+        locator.provider[String, Subject, UnlocatableMapping].get should not be null
       }
     }
 
     "asked to create a provider" should {
-      lazy val provider = locator.provider[String, Provider[String], Mapping[String]]
+      lazy val provider = locator.provider[String, Subject, Salutation]
 
       "consistently reproduce the expected product" in {
         provider.get shouldBe Expected
