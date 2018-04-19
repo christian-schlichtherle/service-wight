@@ -13,11 +13,11 @@
     </parent>
 
     <groupId>global.namespace.service-wight</groupId>
-    <artifactId>service-wight</artifactId>
+    <artifactId>service-wight-parent</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Service Wight</name>
+    <name>Service Wight Parent</name>
 
     <url>https://github.com/christian-schlichtherle/service-wight</url>
     <inceptionYear>2012</inceptionYear>
@@ -28,7 +28,7 @@
     </scm>
 
     <modules>
-        <module>service-wight-core</module>
+        <module>service-wight</module>
         <module>service-wight-it</module>
     </modules>
 
@@ -36,7 +36,7 @@
         <dependencies>
             <dependency>
                 <groupId>global.namespace.service-wight</groupId>
-                <artifactId>service-wight-core</artifactId>
+                <artifactId>service-wight</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
