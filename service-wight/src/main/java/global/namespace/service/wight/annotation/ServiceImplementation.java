@@ -7,10 +7,8 @@ package global.namespace.service.wight.annotation;
 import java.lang.annotation.*;
 
 /**
- * Indicates that the annotated class implements a locatable service.
+ * Indicates that the annotated type is an implementation of a locatable service.
  *
- * @see    <a href="package-summary.html">Package Summary</a>
- * @since  TrueCommons 2.1
  * @author Christian Schlichtherle
  */
 @Target(ElementType.TYPE)

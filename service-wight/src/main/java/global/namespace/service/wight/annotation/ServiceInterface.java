@@ -9,10 +9,9 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated class or interface specifies a locatable service.
+ * Indicates that the annotated type is the interface of a locatable service.
  *
  * @see    <a href="package-summary.html">Package Summary</a>
- * @since  TrueCommons 2.1
  * @author Christian Schlichtherle
  */
 @Target(ElementType.TYPE)
