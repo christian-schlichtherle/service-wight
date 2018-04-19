@@ -14,7 +14,7 @@
 
     <groupId>global.namespace.service-wight</groupId>
     <artifactId>service-wight</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Service Wight</name>
@@ -25,7 +25,7 @@
         <connection>scm:git:https://github.com/christian-schlichtherle/service-wight.git</connection>
         <developerConnection>scm:git:git@github.com:christian-schlichtherle/service-wight.git</developerConnection>
         <url>https://github.com/christian-schlichtherle/service-wight</url>
-      <tag>v0.3.0</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <modules>
