@@ -5,7 +5,7 @@
 package global.namespace.service.wight;
 
 import global.namespace.service.wight.function.Container;
-import global.namespace.service.wight.function.Decorator;
+import global.namespace.service.wight.function.Mapping;
 import global.namespace.service.wight.function.Provider;
 
 import java.util.List;
@@ -17,7 +17,9 @@ import java.util.List;
  *
  * @author Christian Schlichtherle
  */
-public final class CompositeContainer<P> extends CompositeProvider<P, Provider<P>, Decorator<P>> implements Container<P> {
+public final class
+CompositeContainer<P, PP extends Provider<P>, MP extends Mapping<P>> extends CompositeProvider<P, PP, MP>
+        implements Container<P> {
 
     private volatile P product;
 
@@ -25,9 +27,9 @@ public final class CompositeContainer<P> extends CompositeProvider<P, Provider<P
      * Constructs a composite container.
      *
      * @param providers a non-empty list of providers. Only the first element is used on a call to {@link #get()}.
-     * @param decorators a (possibly empty) list of decorators. All elements are used in order on a call to {@link #get()}.
+     * @param mappings a (possibly empty) list of mappings. All elements are used in order on a call to {@link #get()}.
      */
-    public CompositeContainer(List<Provider<P>> providers, List<Decorator<P>> decorators) { super(providers, decorators); }
+    public CompositeContainer(List<PP> providers, List<MP> mappings) { super(providers, mappings); }
 
     @Override
     public P get() {

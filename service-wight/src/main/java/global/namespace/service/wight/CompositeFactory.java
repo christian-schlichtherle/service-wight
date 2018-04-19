@@ -16,7 +16,9 @@ import java.util.List;
  *
  * @author Christian Schlichtherle
  */
-public final class CompositeFactory<P> extends CompositeProvider<P, Factory<P>, Mapping<P>> implements Factory<P> {
+public final class
+CompositeFactory<P, FP extends Factory<P>, MP extends Mapping<P>> extends CompositeProvider<P, FP, MP>
+        implements Factory<P> {
 
     /**
      * Constructs a composite factory.
@@ -24,5 +26,5 @@ public final class CompositeFactory<P> extends CompositeProvider<P, Factory<P>, 
      * @param factories a non-empty list of factories. Only the first element is used on a call to {@link #get()}.
      * @param mappings a (possibly empty) list of mappings. All elements are used in order on a call to {@link #get()}.
      */
-    public CompositeFactory(List<Factory<P>> factories, List<Mapping<P>> mappings) { super(factories, mappings); }
+    public CompositeFactory(List<FP> factories, List<MP> mappings) { super(factories, mappings); }
 }
