@@ -12,48 +12,62 @@ Service Wight targets Java SE 8 and is covered by the Apache License, Version 2.
 
 ### Maven
 
-    <dependency>
-        <groupId>global.namespace.service-wight</groupId>
-        <artifactId>service-wight</artifactId>
-        <version>0.2.0</version>
-    </dependency>
+```xml
+<dependency>
+    <groupId>global.namespace.service-wight</groupId>
+    <artifactId>service-wight</artifactId>
+    <version>0.2.0</version>
+</dependency>
+```
 
 ### Imports
 
 For using the service locator and its results:
 
-    import global.namespace.service.wight.*;
+```java
+import global.namespace.service.wight.*;
+```
 
 For implementing services:
 
-    import global.namespace.service.wight.function.*;
+```java
+import global.namespace.service.wight.function.*;
+```
 
 For making services locatable:
 
-    import global.namespace.service.wight.annotation.*;
+```java
+import global.namespace.service.wight.annotation.*;
+```
 
 ### Implementing A Locatable Service Container
 
-    @ServiceImplementation(value = Provider.class)
-    public class World implements Provider<String> {
+```java
+@ServiceImplementation(value = Provider.class)
+public class World implements Provider<String> {
 
-        @Override    
-        public String get() { return "world"; }
-    }
+    @Override    
+    public String get() { return "world"; }
+}
+```
 
 ### Implementing A Locatable Service Decorator
 
-    @ServiceImplementation(value = Decorator.class)
-    public class Hello implements Decorator<String> {
-    
-        @Override
-        public String apply(String text) { return String.format(Locale.ENGLISH, "Hello %s!", text); }
-    }
+```java
+@ServiceImplementation(value = Decorator.class)
+public class Hello implements Decorator<String> {
+
+    @Override
+    public String apply(String text) { return String.format(Locale.ENGLISH, "Hello %s!", text); }
+}
+```
 
 ### Locating And Composing Services
 
-    final Container<String> container = new ServiceLocator().container(String.class, String.class);
-    System.out.println(container.get());
+```java
+Container<String> container = new ServiceLocator().container(String.class, String.class);
+System.out.println(container.get());
+```
 
 This should print `Hello world!`.
 
@@ -65,33 +79,39 @@ In production, you should provide proper service interfaces and locate them inst
 Refactoring the above code could result in the following code.
 First the interfaces:
 
-    @ServiceInterface
-    public interface Subject extends Provider<String> { }
+```java
+@ServiceInterface
+public interface Subject extends Provider<String> { }
 
-    ...
-    
-    @ServiceInterface
-    public interface Salutation extends Decorator<String> { }
+...
+
+@ServiceInterface
+public interface Salutation extends Decorator<String> { }
+```
 
 Next their implementations:    
-    
-    @ServiceImplementation
-    public class World implements Subject {
 
-        @Override    
-        public String get() { return "world"; }
-    }
+```java
+@ServiceImplementation
+public class World implements Subject {
 
-    ...
-    
-    @ServiceImplementation
-    public class Hello implements Salutation {
-    
-        @Override
-        public String apply(String text) { return String.format(Locale.ENGLISH, "Hello %s!", text); }
-    }
+    @Override    
+    public String get() { return "world"; }
+}
+
+...
+
+@ServiceImplementation
+public class Hello implements Salutation {
+
+    @Override
+    public String apply(String text) { return String.format(Locale.ENGLISH, "Hello %s!", text); }
+}
+```    
 
 And finally the service location:
 
-    final Container<String> container = new ServiceLocator().container(Subject.class, Salutation.class);
-    System.out.println(container.get());
+```java
+Container<String> container = new ServiceLocator().container(Subject.class, Salutation.class);
+System.out.println(container.get());
+```
