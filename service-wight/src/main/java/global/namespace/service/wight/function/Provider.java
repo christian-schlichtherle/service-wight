@@ -4,22 +4,25 @@
  */
 package global.namespace.service.wight.function;
 
+import java.util.function.Supplier;
+
 /**
- * Provides one or more products.
+ * Provides some product.
  * <p>
- * Implementations should be thread-safe.
+ * Like with its superinterface, there is no requirement that a new or distinct result should be returned each
+ * time the provider is called.
  *
- * @param <P> the type of the product(s).
+ * @param <P> the type of the product.
  * @author Christian Schlichtherle
  */
 @FunctionalInterface
-public interface Provider<P> {
+public interface Provider<P> extends Supplier<P> {
 
     /**
-     * Provides a product.
-     * There is no requirement that a new or distinct product should be returned each time this provider is invoked.
+     * Returns some product.
      *
      * @return some product.
      */
+    @Override
     P get();
 }

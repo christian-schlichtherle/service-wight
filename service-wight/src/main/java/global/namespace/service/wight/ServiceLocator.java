@@ -76,7 +76,7 @@ public final class ServiceLocator {
     public ServiceLocator(ClassLoader cl) { this.classLoader = ofNullable(cl); }
 
     /**
-     * Creates a new provider for some product.
+     * Returns a composite provider for some product.
      *
      * @param  <P> the type of the product to provide.
      * @param  factory the class of the locatable provider for the product.
@@ -87,7 +87,7 @@ public final class ServiceLocator {
     CompositeProvider<P, PP, MP> provider(Class<PP> factory) { return provider(factory, empty()); }
 
     /**
-     * Creates a new provider for some product.
+     * Returns a composite provider for some product.
      *
      * @param  <P> the type of the product to provide.
      * @param  factory the class of the locatable provider for the product.
@@ -96,7 +96,9 @@ public final class ServiceLocator {
      * @throws ServiceConfigurationError if loading or instantiating a located class fails for some reason.
      */
     public <P, PP extends Provider<P>, MP extends Mapping<P>>
-    CompositeProvider<P, PP, MP> provider(Class<PP> factory, Class<MP> mapping) { return provider(factory, of(mapping)); }
+    CompositeProvider<P, PP, MP> provider(Class<PP> factory, Class<MP> mapping) {
+        return provider(factory, of(mapping));
+    }
 
     private <P, PP extends Provider<P>, MP extends Mapping<P>>
     CompositeProvider<P, PP, MP> provider(Class<PP> factory, Optional<Class<MP>> mapping) {

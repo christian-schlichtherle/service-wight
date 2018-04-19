@@ -7,9 +7,10 @@ package global.namespace.service.wight.function;
 /**
  * Maps products.
  * <p>
- * Implementations should be thread-safe.
+ * There is no requirement that a new or distinct result should be returned each time the provider is called.
+ * So an implementation may decide to do any changes in place.
  *
- * @param  <P> the type of the products to map.
+ * @param  <P> the type of the product to map.
  * @author Christian Schlichtherle
  */
 @FunctionalInterface
