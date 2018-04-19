@@ -4,7 +4,8 @@
  */
 package global.namespace.service.wight.it
 
-import java.util._
+import java.util.Collections.reverse
+import java.util.ServiceConfigurationError
 
 import global.namespace.service.wight.function._
 import global.namespace.service.wight.it.ServiceLocatorSpec._
@@ -22,24 +23,31 @@ class ServiceLocatorSpec extends WordSpec {
   val locator = new LocatorSugar
 
   "A locator" when {
-    "asked to create a container" should {
-      "report a service configuration error if it can't locate a factory" in {
+    "told to create a composite provider" should {
+      "throw a service configuration error if it can't locate a provider" in {
         intercept[ServiceConfigurationError] {
           locator.provider[String, UnlocatableProvider]
         }
       }
 
-      "not report a service configuration error if it can't locate a decorator" in {
+      "not throw a service configuration error if it can't locate a mapping" in {
         locator.provider[String, Subject, UnlocatableMapping].get should not be null
       }
-    }
-
-    "asked to create a provider" should {
-      lazy val provider = locator.provider[String, Subject, Salutation]
 
       "consistently reproduce the expected product" in {
+        val provider = locator.provider[String, Subject, Salutation]
         provider.get shouldBe Expected
         provider.get shouldBe Expected
+      }
+
+      "support reversing its findings" in {
+        val provider = locator.provider[String, Subject, Salutation]
+        val subjects = provider.providers
+        reverse(subjects)
+        val salutations = provider.mappings
+        reverse(salutations)
+        val updated = new CompositeProvider[String, Subject, Salutation](subjects, salutations)
+        updated.get shouldBe ReversedExpected
       }
     }
   }
@@ -48,10 +56,11 @@ class ServiceLocatorSpec extends WordSpec {
 object ServiceLocatorSpec {
 
   val Expected  = "Hello Christian! How do you do?"
+  val ReversedExpected = "Hello World How do you do?!"
 
   final class LocatorSugar {
 
-    private[this] val locator = new ServiceLocator()
+    private val locator = new ServiceLocator
 
     def provider[P, PP <: Provider[P] : ClassTag]: CompositeProvider[P, PP, _ <: Mapping[P]] =
       locator.provider(runtimeClassOf[PP])
