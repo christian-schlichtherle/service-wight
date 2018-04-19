@@ -24,22 +24,22 @@ In Maven:
 
 ### Imports
 
-For using the service locator and its results:
-
-```java
-import global.namespace.service.wight.*;
-```
-
-For writing service interfaces and implementing them:
+For writing service interfaces:
 
 ```java
 import global.namespace.service.wight.function.*;
 ```
 
-For making services locatable:
+For making service implementations locatable:
 
 ```java
 import global.namespace.service.wight.annotation.*;
+```
+
+For using the service locator and its results:
+
+```java
+import global.namespace.service.wight.*;
 ```
 
 ### Defining And Implementing A Locatable Service Provider
