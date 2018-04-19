@@ -8,7 +8,7 @@ import java.util._
 
 import global.namespace.service.wight.function._
 import global.namespace.service.wight.it.ServiceLocatorSpec._
-import global.namespace.service.wight.{CompositeContainer, CompositeFactory, ServiceLocator}
+import global.namespace.service.wight.{CompositeProvider, ServiceLocator}
 import org.scalatest.Matchers._
 import org.scalatest._
 
@@ -23,44 +23,22 @@ class ServiceLocatorSpec extends WordSpec {
     "asked to create a container" should {
       "report a service configuration error if it can't locate a factory" in {
         intercept[ServiceConfigurationError] {
-          locator.container[String, UnlocatableFactory]
+          locator.provider[String, UnlocatableProvider]
         }
       }
 
       "not report a service configuration error if it can't locate a decorator" in {
-        val container = locator.container[String, Factory[String], UnlocatableDecorator]
-        container.get should not be null
+        val provider = locator.provider[String, Provider[String], UnlocatableMapping]
+        provider.get should not be null
       }
     }
 
-    "asked to create a container" should {
-      lazy val container = locator.container[String, Factory[String], Decorator[String]]
+    "asked to create a provider" should {
+      lazy val provider = locator.provider[String, Provider[String], Mapping[String]]
 
-      "always reproduce the expected product" in {
-        container.get shouldBe Expected
-        container.get shouldBe Expected
-      }
-
-      "provide the same product" in {
-        val p1 = container.get
-        val p2 = container.get
-        p1 shouldBe theSameInstanceAs(p2)
-      }
-    }
-
-    "asked to create a factory" should {
-      lazy val factory = locator.factory[String, Factory[String], Decorator[String]]
-
-      "always reproduce the expected product" in {
-        factory.get shouldBe Expected
-        factory.get shouldBe Expected
-      }
-
-      "provide an equal, but not same product" in {
-        val p1 = factory.get
-        val p2 = factory.get
-        p1 shouldBe p2
-        p1 should not be theSameInstanceAs(p2)
+      "consistently reproduce the expected product" in {
+        provider.get shouldBe Expected
+        provider.get shouldBe Expected
       }
     }
   }
@@ -74,17 +52,11 @@ object ServiceLocatorSpec {
 
     private[this] val locator = new ServiceLocator()
 
-    def factory[P, FP <: Factory[P] : ClassTag]: CompositeFactory[P, FP, _ <: Mapping[P]] =
-      locator.factory(runtimeClassOf[FP])
+    def provider[P, PP <: Provider[P] : ClassTag]: CompositeProvider[P, PP, _ <: Mapping[P]] =
+      locator.provider(runtimeClassOf[PP])
 
-    def factory[P, FP <: Factory[P] : ClassTag, MP <: Mapping[P] : ClassTag]: CompositeFactory[P, FP, MP] =
-      locator.factory(runtimeClassOf[FP], runtimeClassOf[MP])
-
-    def container[P, PP <: Provider[P] : ClassTag]: CompositeContainer[P, PP, _ <: Mapping[P]] =
-      locator.container(runtimeClassOf[PP])
-
-    def container[P, PP <: Provider[P] : ClassTag, MP <: Mapping[P] : ClassTag]: CompositeContainer[P, PP, MP] =
-      locator.container(runtimeClassOf[PP], runtimeClassOf[MP])
+    def provider[P, PP <: Provider[P] : ClassTag, MP <: Mapping[P] : ClassTag]: CompositeProvider[P, PP, MP] =
+      locator.provider(runtimeClassOf[PP], runtimeClassOf[MP])
 
     private def runtimeClassOf[A](implicit tag: ClassTag[A]): Class[A] = {
       require(tag != classTag[Nothing], "Missing type parameter.")

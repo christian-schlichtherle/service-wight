@@ -55,7 +55,7 @@ public class World implements Provider<String> {
 
 ```java
 @ServiceImplementation(value = Decorator.class)
-public class Hello implements Decorator<String> {
+public class Hello implements Mapping<String> {
 
     @Override
     public String apply(String text) { return String.format(Locale.ENGLISH, "Hello %s!", text); }
@@ -65,8 +65,8 @@ public class Hello implements Decorator<String> {
 ### Locating And Composing Services
 
 ```java
-Container<String> container = new ServiceLocator().container(String.class, String.class);
-System.out.println(container.get());
+Provider<String> provider = new ServiceLocator().provider(String.class, String.class);
+System.out.println(provider.get());
 ```
 
 This should print `Hello world!`.
@@ -86,7 +86,7 @@ public interface Subject extends Provider<String> { }
 ...
 
 @ServiceInterface
-public interface Salutation extends Decorator<String> { }
+public interface Salutation extends Mapping<String> { }
 ```
 
 Next their implementations:    
@@ -112,6 +112,6 @@ public class Hello implements Salutation {
 And finally the service location:
 
 ```java
-Container<String> container = new ServiceLocator().container(Subject.class, Salutation.class);
-System.out.println(container.get());
+Provider<String> provider = new ServiceLocator().provider(Subject.class, Salutation.class);
+System.out.println(provider.get());
 ```

@@ -4,6 +4,6 @@
  */
 package global.namespace.service.wight.it;
 
-import global.namespace.service.wight.function.Factory;
+import global.namespace.service.wight.function.Provider;
 
-public abstract class UnlocatableFactory implements Factory<String> { }
+public abstract class UnlocatableProvider implements Provider<String> { }

@@ -1,11 +1,10 @@
 package global.namespace.service.wight.it;
 
 import global.namespace.service.wight.annotation.ServiceImplementation;
-import global.namespace.service.wight.function.Factory;
+import global.namespace.service.wight.function.Provider;
 
-@ServiceImplementation(Factory.class)
-public final class Christian implements Factory<String> {
+@ServiceImplementation(Provider.class)
+public final class Christian implements Provider<String> {
 
-    @SuppressWarnings("RedundantStringConstructorCall")
-    public String get() { return new String("Christian"); }
+    public String get() { return "Christian"; }
 }

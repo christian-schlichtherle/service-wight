@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author Christian Schlichtherle
  */
-public abstract class CompositeProvider<P, PP extends Provider<P>, MP extends Mapping<P>> implements Provider<P> {
+public final class CompositeProvider<P, PP extends Provider<P>, MP extends Mapping<P>> implements Provider<P> {
 
     private final List<PP> providers;
     private final List<MP> mappings;
@@ -28,7 +28,7 @@ public abstract class CompositeProvider<P, PP extends Provider<P>, MP extends Ma
      * @param providers a non-empty list of providers. Only the first element is used on a call to {@link #get()}.
      * @param mappings a (possibly empty) list of mappings. All elements are used in order on a call to {@link #get()}.
      */
-    protected CompositeProvider(final List<PP> providers, final List<MP> mappings) {
+    public CompositeProvider(final List<PP> providers, final List<MP> mappings) {
         if (providers.isEmpty()) {
             throw new IllegalArgumentException();
         }

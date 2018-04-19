@@ -5,8 +5,6 @@
 package global.namespace.service.wight;
 
 import global.namespace.service.wight.annotation.ServiceImplementation;
-import global.namespace.service.wight.function.Decorator;
-import global.namespace.service.wight.function.Factory;
 import global.namespace.service.wight.function.Mapping;
 import global.namespace.service.wight.function.Provider;
 
@@ -78,68 +76,31 @@ public final class ServiceLocator {
     public ServiceLocator(ClassLoader cl) { this.classLoader = ofNullable(cl); }
 
     /**
-     * Creates a new factory for products.
+     * Creates a new provider for some product.
      *
-     * @param  <P> the type of the products to create.
-     * @param  factory the class of the locatable factory for the products.
-     * @return A new factory of products.
-     * @throws ServiceConfigurationError if loading or instantiating a located class fails for some reason.
-     */
-    public <P, FP extends Factory<P>, MP extends Mapping<P>>
-    CompositeFactory<P, FP, MP> factory(Class<FP> factory) { return factory(factory, empty()); }
-
-    /**
-     * Creates a new factory for products.
-     *
-     * @param  <P> the type of the products to create.
-     * @param  factory the class of the locatable factory for the products.
-     * @param  mapping the class of the locatable mapping for the products.
-     * @return A new factory of products.
-     * @throws ServiceConfigurationError if loading or instantiating a located class fails for some reason.
-     */
-    public <P, FP extends Factory<P>, MP extends Mapping<P>>
-    CompositeFactory<P, FP, MP> factory(Class<FP> factory, Class<MP> mapping) { return factory(factory, of(mapping)); }
-
-    private <P, FP extends Factory<P>, MP extends Mapping<P>>
-    CompositeFactory<P, FP, MP> factory(Class<FP> factory, Optional<Class<MP>> mapping) {
-        return new CompositeFactory<>(providers(factory),
-                mapping.map(this::mappings).orElseGet(Collections::emptyList));
-    }
-
-    /**
-     * Creates a new container with a single product.
-     *
-     * @param  <P> the type of the product to contain.
-     * @param  provider the class of the locatable provider for the product.
-     * @return A new container with a single product.
+     * @param  <P> the type of the product to provide.
+     * @param  factory the class of the locatable provider for the product.
+     * @return A new provider of some product.
      * @throws ServiceConfigurationError if loading or instantiating a located class fails for some reason.
      */
     public <P, PP extends Provider<P>, MP extends Mapping<P>>
-    CompositeContainer<P, PP, MP> container(Class<PP> provider) { return container(provider, empty()); }
+    CompositeProvider<P, PP, MP> provider(Class<PP> factory) { return provider(factory, empty()); }
 
     /**
-     * Creates a new container with a single product.
+     * Creates a new provider for some product.
      *
-     * @param  <P> the type of the product to contain.
-     * @param  provider the class of the locatable provider for the product.
+     * @param  <P> the type of the product to provide.
+     * @param  factory the class of the locatable provider for the product.
      * @param  mapping the class of the locatable mappings for the product.
-     * @return A new container with a single product.
+     * @return A new provider form some product.
      * @throws ServiceConfigurationError if loading or instantiating a located class fails for some reason.
      */
     public <P, PP extends Provider<P>, MP extends Mapping<P>>
-    CompositeContainer<P, PP, MP> container(Class<PP> provider, Class<MP> mapping) {
-        return container(provider, of(mapping));
-    }
+    CompositeProvider<P, PP, MP> provider(Class<PP> factory, Class<MP> mapping) { return provider(factory, of(mapping)); }
 
     private <P, PP extends Provider<P>, MP extends Mapping<P>>
-    CompositeContainer<P, PP, MP> container(Class<PP> provider, Optional<Class<MP>> mapping) {
-        mapping.map(m -> {
-            if (!provider.isAssignableFrom(Factory.class) && !m.isAssignableFrom(Decorator.class)) {
-                throw new IllegalArgumentException("Unsafe interface combination. Combine a `Factory` with an optional `Mapping` interface or a `Provider` with an optional `Decorator` interface.");
-            }
-            return null;
-        });
-        return new CompositeContainer<>(providers(provider),
+    CompositeProvider<P, PP, MP> provider(Class<PP> factory, Optional<Class<MP>> mapping) {
+        return new CompositeProvider<>(providers(factory),
                 mapping.map(this::mappings).orElseGet(Collections::emptyList));
     }
 

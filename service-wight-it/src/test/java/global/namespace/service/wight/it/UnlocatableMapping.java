@@ -4,6 +4,6 @@
  */
 package global.namespace.service.wight.it;
 
-import global.namespace.service.wight.function.Decorator;
+import global.namespace.service.wight.function.Mapping;
 
-public abstract class UnlocatableDecorator implements Decorator<String> { }
+public abstract class UnlocatableMapping implements Mapping<String> { }
