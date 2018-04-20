@@ -25,5 +25,6 @@ public @interface ServiceImplementation {
      */
     Class<?>[] value() default {};
 
+    /** Returns the priority of this service implementation. */
     int priority() default 0;
 }

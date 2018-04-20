@@ -8,7 +8,7 @@ It also generates service declarations in `META-INF/services` with the help of t
 
 Service Wight targets Java SE 8 and is covered by the Apache License, Version 2.
 
-## Usage
+## Basic Usage
 
 ### Dependencies
 
@@ -184,7 +184,7 @@ System.out.println(update.get());
 
 This prints `Hello World How do yo do?!`.
  
-## Conclusion
+### Conclusion
 
 Service Wight adds a level of indirection to locatable services and partitions them into providers and transformations 
 at design time.
@@ -193,6 +193,46 @@ runtime.
 This simple design results in a fairly flexible schema for locating services on the class path.
 Leveraging this schema, you can easily design complex plugin architectures where features are encapsulated in plugins 
 which users can compose into solutions simply by adding them to the runtime classpath of their application. 
+
+## Advanced Usage
+
+### Avoiding Dependencies
+
+Maybe you want to avoid a dependency on `service-wight-core` in your service interfaces?
+No problem!
+You can remove the `@ServiceInterface` annotation at the expense of declaring the service interface in the 
+`@ServiceImplementation` annotation.
+So the service interface now looks like this:
+
+```java
+public interface Subject extends Supplier<String> { }
+```
+
+Note that there is no dependency on `service-wight-core` anymore.
+And the service implementation now looks like this:
+
+```java
+@ServiceImplementation(Subject.class)
+public class World implements Subject {
+
+    @Override    
+    public String get() { return "World"; }
+}
+```
+
+The code for the service location remains unchanged:
+
+```java
+Supplier<String> supplier = new ServiceLocator().provider(Subject.class);
+System.out.println(provider.get());
+```
+
+### Using The Annotations Standalone
+
+The `@ServiceInterface` and `@ServiceImplementation` annotations can be used standalone, i.e. without using the 
+`ServiceLocator`.
+This is useful when you don't want your service interfaces to extend `Supplier` or `UnaryOperator` for some reason, but
+you still want some entries in `META-INF/services/` to be generated. 
 
 [`ServiceLoader`]: https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html
 [`Supplier`]: https://docs.oracle.com/javase/8/docs/api/java/util/function/Supplier.html
