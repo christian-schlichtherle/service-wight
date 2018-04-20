@@ -66,7 +66,7 @@ public class World implements Subject {
 Finally, the service location:
 
 ```java
-Supplier<String> supplier = new ServiceLocator().provider(Subject.class);
+Supplier<String> provider = new ServiceLocator().provider(Subject.class);
 System.out.println(provider.get());
 ```
 
@@ -110,18 +110,19 @@ public class Hello implements Salutation {
 Finally, the service location:
 
 ```java
-Supplier<String> supplier = new ServiceLocator().provider(Subject.class, Salutation.class);
+Supplier<String> provider = new ServiceLocator().provider(Subject.class, Salutation.class);
 System.out.println(provider.get());
 ```
 
 Note that the `provider` method now takes two parametes, the first is the service interface for the locatable service 
-provider and the second is the service interface for the locatable service transformation.
+provider, `Subject`, and the second is the service interface for the locatable service transformation, `Salutation`.
 
 The preceding code prints `Hello World!`, but why?
 Service Wight composes all service providers and transformations it locates on the classpath into a custom provider.
 In this case, first it locates all `Subject` implementations (there is only one for now) and sorts them by descending 
 priority.
-Second, it locates all `Salutation` implementations and sorts them by ascending priority.
+Second, it locates all `Salutation` implementations (again, there is only one by now) and sorts them by ascending 
+priority.
 Third, it creates a composite provider which selects the first `Subject` and applies all `Salutation`s in order.  
 
 ### Overriding The Locatable Service Provider
@@ -160,15 +161,15 @@ Now you can run the service location code again and it prints `Hello Christian! 
 
 Service Wight adds a level of indirection to locatable services and partitions them into service providers and 
 service transformations at design time.
-Based on their priority, providers and transformations are selected and sorted for composition into custom providers at 
-runtime. 
+Based on their priority then, providers and transformations are selected and sorted for composition into custom 
+providers at runtime. 
 This simple design results in a fairly flexible schema for locating services on the class path.
 Leveraging this schema, you can easily design complex plugin architectures where features are encapsulated in plugins 
 which users can compose into solutions simply by adding them to the runtime classpath of their application. 
 
 ## Advanced Usage
 
-### Introspecting The Findings Of The Service Locator
+### Inspecting The Findings Of The Service Locator
 
 The `provider` method of the `ServiceLocator` class actually returns a `CompositeProvider`, not just a [`Supplier`], so 
 you can write this:
@@ -227,7 +228,7 @@ public class World implements Subject {
 The code for the service location remains unchanged:
 
 ```java
-Supplier<String> supplier = new ServiceLocator().provider(Subject.class);
+Supplier<String> provider = new ServiceLocator().provider(Subject.class);
 System.out.println(provider.get());
 ```
 
