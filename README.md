@@ -1,7 +1,7 @@
 # Service Wight
 
-Service Wight composes service factories or containers from factories, containers, modifiers and decorators it locates
-on the class path at runtime. 
+Service Wight locates service providers and service transformations on the class path and composes them into composite 
+service providers. 
 Think of it as [`ServiceLoader`] on steroids.
 
 It also generates service declarations in `META-INF/services` with the help of the `@ServiceImplementation` annotation.
