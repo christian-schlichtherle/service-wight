@@ -24,7 +24,7 @@ In Maven:
 
 ### Imports
 
-For writing services:
+For writing service interfaces:
 
 ```java
 import java.util.function.*;
@@ -44,6 +44,7 @@ import global.namespace.service.wight.core.*;
 
 ### Designing A Locatable Service Provider
 
+A _locatable service provider_ is simply a locatable service which supplies some product.
 First, the service interface:
 
 ```java
@@ -78,12 +79,14 @@ In this example, `ServiceLocator` works pretty much like `ServiceLoader`, except
 2. The `Subject` interface needs to extend the [`Supplier`] interface.
 
 The second point may look like a constraint, but it's not:
-In fact, this design adds a level of indirection which allows you to locate services which `ServiceLoader` could not 
-locate directly - like `String` in this case.  
+In fact, this design adds a level of indirection which allows you to supply products which `ServiceLoader` could not 
+locate directly on the classpath - like `String` in this case.
 
 ### Adding A Locatable Service Transformation
 
-Let's add a salutation for the located subject.
+Let's add a salutation for the supplied subject.
+For this we need a _locatable service transformation_, which is simply a unary operator on some product.
+A unary operator is simply a function where the input and output parameters have the same type.
 First, the service interface:
 
 ```java
@@ -92,7 +95,6 @@ public interface Salutation extends UnaryOperator<String> { }
 ```
 
 Note that the base interface is [`UnaryOperator`] this time - not [`Supplier`].
-A `UnaryOperator` is simply a function where the input and output parameters have the same type.
 
 Next, the service implementation:
 
@@ -112,12 +114,14 @@ Supplier<String> supplier = new ServiceLocator().provider(Subject.class, Salutat
 System.out.println(provider.get());
 ```
 
-This prints `Hello World!`, but why?
+Note that the `provider` method now takes two parametes, the first is the service interface for the locatable service 
+provider and the second is the service interface for the locatable service transformation.
 
-Service Wight composes all providers and transformations it finds on the classpath into a custom provider.
-In this case, first it locates all implementations of the `Subject` interface (there is only one for now) and sorts them 
-by descending priority.
-Second, it locates all implementations of the `Salutation` interface and sorts them by ascending priority.
+The preceding code prints `Hello World!`, but why?
+Service Wight composes all service providers and transformations it locates on the classpath into a custom provider.
+In this case, first it locates all `Subject` implementations (there is only one for now) and sorts them by descending 
+priority.
+Second, it locates all `Salutation` implementations and sorts them by ascending priority.
 Third, it creates a composite provider which selects the first `Subject` and applies all `Salutation`s in order.  
 
 ### Overriding The Locatable Service Provider
@@ -152,10 +156,22 @@ public final class Smalltalk implements Salutation {
 
 Now you can run the service location code again and it prints `Hello Christian! How do you do?`.
 
-### The Composite Provider
+### Conclusion
 
-Note that the `provider` method of the `ServiceLocator` class actually returns a `CompositeProvider`, not just a 
-[`Supplier`], so you can write this:
+Service Wight adds a level of indirection to locatable services and partitions them into service providers and 
+service transformations at design time.
+Based on their priority, providers and transformations are selected and sorted for composition into custom providers at 
+runtime. 
+This simple design results in a fairly flexible schema for locating services on the class path.
+Leveraging this schema, you can easily design complex plugin architectures where features are encapsulated in plugins 
+which users can compose into solutions simply by adding them to the runtime classpath of their application. 
+
+## Advanced Usage
+
+### Introspecting The Findings Of The Service Locator
+
+The `provider` method of the `ServiceLocator` class actually returns a `CompositeProvider`, not just a [`Supplier`], so 
+you can write this:
 
 ```java
 CompositeProvider<String, Subject, Salutation> provider = new ServiceLocator().provider(Subject.class, Salutation.class);
@@ -163,15 +179,15 @@ System.out.println(provider.get());
 ```
 
 The `CompositeProvider` class provides access to the list of located service providers and transformations by its 
-`providers()` and `transformations()` methods.
-You can use these properties to inspect the findings of the service location.
+`providers()` and `transformations()` properties.
+You can use these properties to inspect the findings of the service locator.
 For example, you may want to log the classes and the priorities of the located service providers and transformations for 
 post mortem analysis.
 
 You can also create your own `CompositeProvider`.
-For example, you may want to override the priority based selection and sorting of providers and transformations.
+For example, you may want to override the priority based selection and sorting of service providers and transformations.
 You can do so by calling the `providers()` and `transformations()` properties, modifying the returned lists and creating 
-a new `CompositeProvider` from them:
+a new `CompositeProvider` from them like this:
 
 ```java
 List<Subject> subjects = provider.providers();
@@ -183,18 +199,6 @@ System.out.println(update.get());
 ```
 
 This prints `Hello World How do yo do?!`.
- 
-### Conclusion
-
-Service Wight adds a level of indirection to locatable services and partitions them into providers and transformations 
-at design time.
-Based on their priority, providers and transformations are selected and sorted for composition into custom providers at 
-runtime. 
-This simple design results in a fairly flexible schema for locating services on the class path.
-Leveraging this schema, you can easily design complex plugin architectures where features are encapsulated in plugins 
-which users can compose into solutions simply by adding them to the runtime classpath of their application. 
-
-## Advanced Usage
 
 ### Avoiding Dependencies
 
@@ -208,8 +212,8 @@ So the service interface now looks like this:
 public interface Subject extends Supplier<String> { }
 ```
 
-Note that there is no dependency on `service-wight-core` anymore.
-And the service implementation now looks like this:
+Note that there is no more dependency on `service-wight-core`.
+The service implementation now looks like this:
 
 ```java
 @ServiceImplementation(Subject.class)
