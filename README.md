@@ -1,8 +1,7 @@
 # Service Wight
 
 Service Wight locates service providers and service transformations on the class path and composes them into composite 
-service providers. 
-Think of it as [`ServiceLoader`] on steroids.
+service providers - you can think of this as [`ServiceLoader`] on steroids.
 It also generates service declarations in `META-INF/services` with the help of the `@ServiceImplementation` annotation.
 
 Service Wight targets Java SE 8 and is covered by the Apache License, Version 2.
@@ -165,7 +164,7 @@ providers at runtime.
 This simple design results in a fairly flexible schema for composing services located on the class path into complex 
 solutions.
 Leveraging this schema, you can easily design complex plugin architectures where features are encapsulated in plugins 
-which users can compose into their application simply by adding them to the runtime classpath. 
+which users can compose into their application simply by adding them to the runtime classpath.   
 
 ## Advanced Usage
 
