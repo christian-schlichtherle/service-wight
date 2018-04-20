@@ -4,6 +4,8 @@
  */
 package global.namespace.service.wight.core.function;
 
+import java.util.function.UnaryOperator;
+
 /**
  * Maps products.
  * <p>
@@ -14,7 +16,7 @@ package global.namespace.service.wight.core.function;
  * @author Christian Schlichtherle
  */
 @FunctionalInterface
-public interface Mapping<P> {
+public interface Mapping<P> extends UnaryOperator<P> {
 
     /**
      * Maps the given product.

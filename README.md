@@ -2,7 +2,7 @@
 
 Service Wight composes service factories or containers from factories, containers, modifiers and decorators it locates
 on the class path at runtime. 
-Think of it as [ServiceLoader] on steroids.
+Think of it as [`ServiceLoader`] on steroids.
 
 It also generates service declarations in `META-INF/services` with the help of the `@ServiceImplementation` annotation.
 
@@ -18,7 +18,7 @@ In Maven:
 <dependency>
     <groupId>global.namespace.service-wight</groupId>
     <artifactId>service-wight-core</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
 </dependency>
 ```
 
@@ -42,7 +42,7 @@ For using the service locator and its results:
 import global.namespace.service.wight.core.*;
 ```
 
-### Defining And Implementing A Locatable Service Provider
+### Designing A Locatable Service Provider
 
 First, the service interface:
 
@@ -51,7 +51,7 @@ First, the service interface:
 public interface Subject extends Provider<String> { }
 ```
 
-Next, a service implementation:
+Next, the service implementation:
 
 ```java
 @ServiceImplementation
@@ -75,13 +75,13 @@ In this example, `ServiceLocator` works pretty much like `ServiceLoader`, except
 
 1. You don't have to write an entry in `META-INF/services/...Subject` referencing the `World` class.
    The processor for the `@ServiceImplementation` annotation does that for you.
-2. The `World` class needs to implement the `Provider` interface (which extends `java.util.function.Supplier`).
+2. The `Subject` interface needs to implement the `Provider` interface, which extends [`Supplier`].
 
 The second point may look like a constraint, but it's not:
-To the contrary, this design adds a level of indirection which allows you to locate products which `ServiceLoader` could
-not locate otherwise - `String` in this case.  
+In fact, this design adds a level of indirection which allows you to locate products which `ServiceLoader` could not 
+locate directly - like `String` in this case.  
 
-### Defining And Implementing A Locatable Service Mapping
+### Adding A Locatable Service Mapping
 
 Let's add a salutation for the located subject.
 First, the service interface:
@@ -91,7 +91,11 @@ First, the service interface:
 public interface Salutation extends Mapping<String> { }
 ```
 
-Next, a service implementation:
+Note that the base interface is `Mapping` this time - not `Provider`.
+A `Mapping` is simply a function where the input and output parameters have the same type.
+In fact, it extends [`UnaryOperator`].
+
+Next, the service implementation:
 
 ```java
 @ServiceImplementation
@@ -112,12 +116,12 @@ System.out.println(provider.get());
 This prints `Hello World!`, but why?
 
 Service Wight composes all providers and mappings it finds on the class path into a new provider.
-In this case, first it locates all implementations of the `Subject` interface (there is only one for now) and selects 
-the one with the highest priority as you will see next.
-Second, it locates all implementations of the `Salutation` interface and orders them by ascending priority.
-Third, it composes a provider which applies the selected `Subject` and applies the sorted `Salutation`s in order.  
+In this case, first it locates all implementations of the `Subject` interface (there is only one for now) and sorts them 
+by descending priority.
+Second, it locates all implementations of the `Salutation` interface and sorts them by ascending priority.
+Third, it creates a composite provider which selects the first `Subject` and applies all `Salutation`s in order.  
 
-### Overriding A Locatable Service Provider
+### Overriding The Locatable Service Provider
 
 For overriding the selection of the locatable service provider, you simply need to implement another locatable service 
 provider with a higher priority - the default priority is `0`:
@@ -131,12 +135,11 @@ public class Christian implements Subject {
 }
 ```
 
-Now you can run the service location code again and it will print `Hello Christian!` without any changes. 
+Now you can run the service location code again and it will print `Hello Christian!`, without any changes. 
 
 ### Adding Another Locatable Service Mapping
 
 Similar to a locatable service provider, you can add another locatable service mapping.
-However, all located service mappings are applied to the selected located service provider in ascending order.
 Again, the default priority is `0`:
 
 ```java
@@ -153,16 +156,16 @@ Now you can run the service location code again and it prints `Hello Christian! 
 ### The Composite Provider
 
 Note that the `provider` method of the `ServiceLocator` class actually returns a `CompositeProvider`, not just a 
-`Provider`:
+`Provider`, so you can write this:
 
 ```java
 CompositeProvider<String, Subject, Salutation> provider = new ServiceLocator().provider(Subject.class, Salutation.class);
 System.out.println(provider.get());
 ```
 
-The `CompositeProvider` class returns the list of located service providers and mappings by its `providers` and 
-`mappings` methods.
-You can use these to inspect the findings of the service location.
+The `CompositeProvider` class provides access to the list of located service providers and mappings by its `providers()` 
+and `mappings()` methods.
+You can use these properties to inspect the findings of the service location.
 For example, you may want to log the classes and the priorities of the located service providers and mappings for post
 mortem analysis.
 
@@ -184,8 +187,14 @@ This prints `Hello World How do yo do?!`.
  
 ## Conclusion
 
-Adding a level of indirection for the service lookup and partitioning locatable services into providers and mappings
-with priority based selection and sorting results in a fairly flexible, yet simple mechanism for locating services on
-the class path.   
+Service Wight adds a level of indirection to locatable services and partitions them into providers and mappings at 
+design time.
+Based on their priority then, providers and mappings are selected and sorted for composition into custom providers at 
+runtime. 
+This simple design results in a fairly flexible schema for locating services on the class path.
+Leveraging this schema, you can easily design complex plugin architectures where features are encapsulated in plugins 
+which users can compose into solutions simply by adding them to the runtime classpath of their application. 
 
-[ServiceLoader]: https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html
+[`ServiceLoader`]: https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html
+[`Supplier`]: https://docs.oracle.com/javase/8/docs/api/java/util/function/Supplier.html
+[`UnaryOperator`]: https://docs.oracle.com/javase/8/docs/api/java/util/function/UnaryOperator.html
