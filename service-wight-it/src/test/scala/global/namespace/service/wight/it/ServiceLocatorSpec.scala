@@ -6,11 +6,11 @@ package global.namespace.service.wight.it
 
 import java.util.Collections.reverse
 import java.util.ServiceConfigurationError
+import java.util.function.{Supplier, UnaryOperator}
 
-import global.namespace.service.wight.core.function._
 import global.namespace.service.wight.core.{CompositeProvider, ServiceLocator}
 import global.namespace.service.wight.it.ServiceLocatorSpec._
-import global.namespace.service.wight.it.case1.{UnlocatableMapping, UnlocatableProvider}
+import global.namespace.service.wight.it.case1.{UnlocatableProvider, UnlocatableTransformation}
 import global.namespace.service.wight.it.case2.{Salutation, Subject}
 import org.scalatest.Matchers._
 import org.scalatest._
@@ -31,7 +31,7 @@ class ServiceLocatorSpec extends WordSpec {
       }
 
       "not throw a service configuration error if it can't locate a mapping" in {
-        locator.provider[String, Subject, UnlocatableMapping].get should not be null
+        locator.provider[String, Subject, UnlocatableTransformation].get should not be null
       }
 
       "consistently reproduce the expected product" in {
@@ -44,7 +44,7 @@ class ServiceLocatorSpec extends WordSpec {
         val provider = locator.provider[String, Subject, Salutation]
         val subjects = provider.providers
         reverse(subjects)
-        val salutations = provider.mappings
+        val salutations = provider.transformations
         reverse(salutations)
         val updated = new CompositeProvider[String, Subject, Salutation](subjects, salutations)
         updated.get shouldBe ReversedExpected
@@ -62,10 +62,10 @@ object ServiceLocatorSpec {
 
     private val locator = new ServiceLocator
 
-    def provider[P, PP <: Provider[P] : ClassTag]: CompositeProvider[P, PP, _ <: Mapping[P]] =
+    def provider[P, PP <: Supplier[P] : ClassTag]: CompositeProvider[P, PP, _ <: UnaryOperator[P]] =
       locator.provider(runtimeClassOf[PP])
 
-    def provider[P, PP <: Provider[P] : ClassTag, MP <: Mapping[P] : ClassTag]: CompositeProvider[P, PP, MP] =
+    def provider[P, PP <: Supplier[P] : ClassTag, MP <: UnaryOperator[P] : ClassTag]: CompositeProvider[P, PP, MP] =
       locator.provider(runtimeClassOf[PP], runtimeClassOf[MP])
 
     private def runtimeClassOf[A](implicit tag: ClassTag[A]): Class[A] = {

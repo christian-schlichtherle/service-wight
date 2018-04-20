@@ -4,6 +4,6 @@
  */
 package global.namespace.service.wight.it.case1;
 
-import global.namespace.service.wight.core.function.Mapping;
+import java.util.function.UnaryOperator;
 
-public abstract class UnlocatableMapping implements Mapping<String> { }
+public abstract class UnlocatableTransformation implements UnaryOperator<String> { }

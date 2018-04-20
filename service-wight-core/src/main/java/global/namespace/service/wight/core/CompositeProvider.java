@@ -4,61 +4,65 @@
  */
 package global.namespace.service.wight.core;
 
-import global.namespace.service.wight.core.function.Mapping;
-import global.namespace.service.wight.core.function.Provider;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 /**
- * A provider of some product which is composed of a list of providers and a list of mappings for the product.
- * This class is provided to allow callers of the various {@code factory} and {@code container} methods in
- * {@link ServiceLocator} to analyze the findings of the service location process and potentially modify it.
+ * A provider of some product which is composed of a list of product providers and a list of product transformations.
+ * This class is provided to allow callers of the various {@code provider} methods in {@link ServiceLocator} to
+ * introspect the results of the service location process and potentially modify it.
  *
+ * @param <P> the type of the product
+ * @param <PP> the type of the product providers
+ * @param <PT> the type of the product transformations
  * @author Christian Schlichtherle
  */
-public final class CompositeProvider<P, PP extends Provider<P>, MP extends Mapping<P>> implements Provider<P> {
+public final class CompositeProvider<P, PP extends Supplier<P>, PT extends UnaryOperator<P>> implements Supplier<P> {
 
     private final List<PP> providers;
-    private final List<MP> mappings;
+    private final List<PT> transformations;
 
     /**
      * Constructs a composite provider.
      *
-     * @param providers a non-empty list of providers. Only the first element is used on a call to {@link #get()}.
-     * @param mappings a (possibly empty) list of mappings. All elements are used in order on a call to {@link #get()}.
+     * @param providers a non-empty list of product providers.
+     *                  Only the first element is used on a call to {@link #get()}.
+     * @param transformations a (possibly empty) list of product transformations.
+     *                        All elements are used in order on a call to {@link #get()}.
      */
-    public CompositeProvider(final List<PP> providers, final List<MP> mappings) {
+    public CompositeProvider(final List<PP> providers, final List<PT> transformations) {
         if (providers.isEmpty()) {
             throw new IllegalArgumentException();
         }
         this.providers = new ArrayList<>(providers);
-        this.mappings = new ArrayList<>(mappings);
+        this.transformations = new ArrayList<>(transformations);
     }
 
     /**
-     * Returns a protective copy of the list of providers.
+     * Returns a protective copy of the list of product providers.
      * The list is never empty.
      */
     public List<PP> providers() { return new ArrayList<>(providers); }
 
     /**
-     * Returns a protective copy of the list of mappings.
+     * Returns a protective copy of the list of product transformations.
      * The list may be empty.
      */
-    public List<MP> mappings() { return new ArrayList<>(mappings); }
+    public List<PT> transformations() { return new ArrayList<>(transformations); }
 
     @Override
     public P get() {
         P product = providers.get(0).get();
-        for (Mapping<P> mapping : mappings) {
-            product = mapping.apply(product);
+        for (UnaryOperator<P> operation : transformations) {
+            product = operation.apply(product);
         }
         return product;
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[providers = " + providers + ", mappings = " + mappings + ']';
+        return getClass().getSimpleName() + "[providers = " + providers + ", transformations = " + transformations + ']';
     }
 }
