@@ -1,10 +1,20 @@
-# Service Wight
+# Service Wight [![Maven Central](https://img.shields.io/maven-central/v/global.namespace.service-wight/service-wight-core.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22global.namespace.service-wight%22%20AND%20a%3A%22service-wight-core%22) [![Build Status](https://api.travis-ci.org/christian-schlichtherle/service-wight.svg)](https://travis-ci.org/christian-schlichtherle/service-wight)
 
-Service Wight locates service providers and service transformations on the class path and composes them into composite 
+Service Wight locates service providers and service transformations on the class path and composes them into custom 
 service providers - you can think of this as [`ServiceLoader`] on steroids.
-It also generates service declarations in `META-INF/services` with the help of the `@ServiceImplementation` annotation.
+It also generates service declarations in `META-INF/services/` with the help of the `@ServiceImplementation` annotation.
 
 Service Wight targets Java SE 8 and is covered by the Apache License, Version 2.
+
+## Features
+
++ Generates entries in `META-INF/services/`.
++ Partitions locatable services into service providers and service transformations for some product of any type.
++ Sorts and filters located services based on their priority.
++ Composes located service providers and service transformations into custom service providers.
++ Provides transparent access to the located services for...
+  + post mortem analysis, e.g. logging, or...
+  + overriding the priority based sorting and filtering.  
 
 ## Basic Usage
 
@@ -83,8 +93,8 @@ locate directly on the classpath - like `String` in this case.
 ### Adding A Locatable Service Transformation
 
 Let's add a salutation for the supplied subject.
-For this we need a _locatable service transformation_, which is simply a unary operator on some product.
-A unary operator is simply a function where the input and output parameters have the same type.
+For this we need a _locatable service transformation_, which is simply a locatable service which transforms some
+product.
 First, the service interface:
 
 ```java
@@ -93,6 +103,7 @@ public interface Salutation extends UnaryOperator<String> { }
 ```
 
 Note that the base interface is [`UnaryOperator`] this time - not [`Supplier`].
+A unary operator is simply a function where the input and output parameters have the same type.
 
 Next, the service implementation:
 
