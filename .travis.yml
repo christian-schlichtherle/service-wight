@@ -1,0 +1,17 @@
+cache:
+  directories:
+  - $HOME/.m2/repository
+
+git:
+  depth: 3
+
+install: ./mvnw -V -DskipTests=true -Dgpg.skip=true -Psonatype-oss-release install
+
+jdk:
+- openjdk8
+- oraclejdk8
+- oraclejdk9
+
+language: java
+
+script: ./mvnw verify
