@@ -1,7 +1,7 @@
 # Service Wight [![Maven Central](https://img.shields.io/maven-central/v/global.namespace.service-wight/service-wight-core.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22global.namespace.service-wight%22%20AND%20a%3A%22service-wight-core%22) [![Build Status](https://api.travis-ci.org/christian-schlichtherle/service-wight.svg)](https://travis-ci.org/christian-schlichtherle/service-wight)
 
-Service Wight locates service providers and service transformations on the class path and composes them into custom 
-service providers - you can think of this as [`ServiceLoader`] on steroids.
+Service Wight composes services from providers and transformations located on the class path - you can think of this as 
+[`ServiceLoader`] on steroids.
 It also generates service declarations in `META-INF/services/` with the help of the `@ServiceImplementation` annotation.
 
 Service Wight targets Java SE 8 and is covered by the Apache License, Version 2.
