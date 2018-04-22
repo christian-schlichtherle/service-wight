@@ -44,7 +44,7 @@ class ServiceLocatorSpec extends WordSpec {
         val provider = locator.provider[String, Subject, Salutation]
         val subjects = provider.providers
         reverse(subjects)
-        val salutations = provider.transformations
+        val salutations = provider.filters
         reverse(salutations)
         val updated = new CompositeProvider[String, Subject, Salutation](subjects, salutations)
         updated.get shouldBe ReversedExpected

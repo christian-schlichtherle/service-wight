@@ -16,7 +16,7 @@ import static java.util.Optional.*;
 
 /**
  * Locates services on the classpath and creates composite product providers from located service providers and
- * transformations.
+ * filters.
  * Locating services is done in several steps:
  * <p>
  * First, the fully qualified name of a given service interface class is used as the key string to lookup a
@@ -34,15 +34,15 @@ import static java.util.Optional.*;
  * Only the first instance (i.e. the one with the highest priority) is used for providing a product.
  * <p>
  * Next, the classpath is searched again for any resources with the name {@code "META-INF/services/"} plus the name of
- * the given <i>service transformation</i> class.
+ * the given <i>service filter</i> class.
  * If this yields some results, the classes with the names contained in these resources get loaded and instantiated by
  * calling their public no-argument constructor.
  * Next, the instances get sorted by ascending {@linkplain ServiceImplementation#priority() priority} for subsequent
  * use.
  * <p>
- * Finally, a composite provider gets created from the lists of product providers and transformations.
- * The composite provider uses only the first product provider, but all product transformations.
- * Client applications can introspect, and potentially modify, the lists of product providers and transformations.
+ * Finally, a composite provider gets created from the lists of product providers and filters.
+ * The composite provider uses only the first product provider, but all product filters.
+ * Client applications can introspect, and potentially modify, the lists of product providers and filters.
  *
  * @see    ServiceLoader
  * @author Christian Schlichtherle
@@ -58,7 +58,7 @@ public final class ServiceLocator {
             ).reversed()
     );
 
-    private static final Comparator<UnaryOperator<?>> TRANSFORMATION_COMPARATOR = (
+    private static final Comparator<UnaryOperator<?>> FILTER_COMPARATOR = (
             comparingInt(mapping ->
                     ofNullable(mapping.getClass().getDeclaredAnnotation(ServiceImplementation.class))
                             .map(ServiceImplementation::priority)
@@ -90,19 +90,19 @@ public final class ServiceLocator {
      *
      * @param  <P> the type of the product to provide.
      * @param  provider the interface of the locatable product providers.
-     * @param  transformation the interface of the locatable product transformations.
+     * @param  filter the interface of the locatable product filters.
      * @return A new composite provider form some product.
      * @throws ServiceConfigurationError if loading or instantiating a located class fails for some reason.
      */
     public <P, PP extends Supplier<P>, MP extends UnaryOperator<P>>
-    CompositeProvider<P, PP, MP> provider(Class<PP> provider, Class<MP> transformation) {
-        return provider(provider, of(transformation));
+    CompositeProvider<P, PP, MP> provider(Class<PP> provider, Class<MP> filter) {
+        return provider(provider, of(filter));
     }
 
     private <P, PP extends Supplier<P>, MP extends UnaryOperator<P>>
-    CompositeProvider<P, PP, MP> provider(Class<PP> factory, Optional<Class<MP>> mapping) {
+    CompositeProvider<P, PP, MP> provider(Class<PP> factory, Optional<Class<MP>> filter) {
         return new CompositeProvider<>(providers(factory),
-                mapping.map(this::mappings).orElseGet(Collections::emptyList));
+                filter.map(this::mappings).orElseGet(Collections::emptyList));
     }
 
     private <P, PP extends Supplier<P>> List<PP> providers(final Class<? extends PP> service) {
@@ -122,7 +122,7 @@ public final class ServiceLocator {
     private <P, MP extends UnaryOperator<P>> List<MP> mappings(final Class<? extends MP> service) {
         final List<MP> mappings = new ArrayList<>();
         instancesOf(service).forEach(mappings::add);
-        mappings.sort(TRANSFORMATION_COMPARATOR);
+        mappings.sort(FILTER_COMPARATOR);
         return mappings;
     }
 

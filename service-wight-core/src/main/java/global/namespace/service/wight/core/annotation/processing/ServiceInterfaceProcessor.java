@@ -25,7 +25,6 @@ import static javax.lang.model.element.Modifier.*;
  * Processes the {@link ServiceInterface} annotation.
  *
  * @author Christian Schlichtherle
- * @since TrueCommons 2.1
  */
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("*")

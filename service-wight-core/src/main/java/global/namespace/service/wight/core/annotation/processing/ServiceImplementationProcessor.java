@@ -40,7 +40,6 @@ import static javax.tools.StandardLocation.CLASS_OUTPUT;
  * provider configuration file in {@code META-INF/services}.
  *
  * @author Christian Schlichtherle
- * @since TrueCommons 2.1
  */
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("*")
