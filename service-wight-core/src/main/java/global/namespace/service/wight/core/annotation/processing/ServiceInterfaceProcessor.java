@@ -27,7 +27,7 @@ import static javax.lang.model.element.Modifier.*;
  * @author Christian Schlichtherle
  * @since TrueCommons 2.1
  */
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("*")
 public final class ServiceInterfaceProcessor extends ServiceAnnnotationProcessor {
 
