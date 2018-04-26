@@ -179,7 +179,7 @@ which users can compose into their application simply by adding them to the runt
 
 ## Advanced Usage
 
-### Inspecting The Findings Of The Service Locator
+### Overriding The Findings Of The Service Locator
 
 The `provider` method of the `ServiceLocator` class actually returns a `CompositeProvider`, not just a [`Supplier`], so 
 you can write this:
