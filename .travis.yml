@@ -9,8 +9,9 @@ install: ./mvnw -V -DskipTests=true -Dgpg.skip=true -Psonatype-oss-release insta
 
 jdk:
 - openjdk8
-- oraclejdk8
-- oraclejdk9
+- openjdk9
+- openjdk10
+- openjdk11
 
 language: java
 
