@@ -208,7 +208,7 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
                         try (Writer w = fo.openWriter()) {
                             for (final TypeElement impl : coll) {
                                 w.append(name(impl)).append("\n");
-                                debug(String.format(Locale.ENGLISH, "Registered at: %s", path), impl);
+                                debug(String.format(Locale.ENGLISH, "Registered in: %s", path), impl);
                             }
                         }
                     } catch (IOException e) {
