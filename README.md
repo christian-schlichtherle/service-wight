@@ -1,6 +1,6 @@
 # Service Wight [![Maven Central](https://img.shields.io/maven-central/v/global.namespace.service-wight/service-wight-core.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22global.namespace.service-wight%22%20AND%20a%3A%22service-wight-core%22) [![Build Status](https://api.travis-ci.org/christian-schlichtherle/service-wight.svg)](https://travis-ci.org/christian-schlichtherle/service-wight)
 
-Service Wight composes services from providers and filters located on the class path - you can think of this as 
+Service Wight composes services from providers and filters located on the class path - you can think of it as 
 [`ServiceLoader`] on steroids.
 It also generates service declarations in `META-INF/services/` with the help of the `@ServiceImplementation` annotation.
 
