@@ -42,7 +42,7 @@ import static javax.tools.StandardLocation.CLASS_OUTPUT;
  * @author Christian Schlichtherle
  */
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-@SupportedAnnotationTypes("*")
+@SupportedAnnotationTypes("global.namespace.service.wight.core.annotation.ServiceImplementation")
 public final class ServiceImplementationProcessor extends ServiceAnnnotationProcessor {
 
     private static final Comparator<TypeElement> TYPE_ELEMENT_COMPARATOR =
@@ -66,7 +66,7 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
             }
         }
         registry.persist();
-        return false; // critical!
+        return true;
     }
 
     private boolean valid(final TypeElement impl) {

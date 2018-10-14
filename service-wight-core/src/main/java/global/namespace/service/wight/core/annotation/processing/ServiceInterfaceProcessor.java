@@ -27,7 +27,7 @@ import static javax.lang.model.element.Modifier.*;
  * @author Christian Schlichtherle
  */
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-@SupportedAnnotationTypes("*")
+@SupportedAnnotationTypes("global.namespace.service.wight.core.annotation.ServiceInterface")
 public final class ServiceInterfaceProcessor extends ServiceAnnnotationProcessor {
 
     @Override
@@ -39,7 +39,7 @@ public final class ServiceInterfaceProcessor extends ServiceAnnnotationProcessor
                 warning("Expected a type element here.", elem);
             }
         }
-        return false; // critical!
+        return true;
     }
 
     private void valid(final TypeElement iface) {
