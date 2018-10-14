@@ -10,29 +10,29 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 /**
- * A provider of some product which is composed of a list of product providers and a list of product filters.
- * This class is provided to allow callers of the various {@code provider} methods in {@link ServiceLocator} to
+ * A provider of some service which is generated from a list of service providers and a list of service filters.
+ * This class enables callers of the various {@code provider} methods in {@link ServiceLocator} to
  * introspect the results of the service location process and potentially modify it.
  *
- * @param <P> the type of the product
- * @param <PP> the type of the product providers
- * @param <PT> the type of the product filters
+ * @param <S>  the type of the service.
+ * @param <SP> the type of the service providers.
+ * @param <SF> the type of the service filters.
  * @author Christian Schlichtherle
  */
-public final class CompositeProvider<P, PP extends Supplier<P>, PT extends UnaryOperator<P>> implements Supplier<P> {
+public final class CompositeProvider<S, SP extends Supplier<S>, SF extends UnaryOperator<S>> implements Supplier<S> {
 
-    private final List<PP> providers;
-    private final List<PT> filters;
+    private final List<SP> providers;
+    private final List<SF> filters;
 
     /**
      * Constructs a composite provider.
      *
-     * @param providers a non-empty list of product providers.
+     * @param providers a non-empty list of service providers.
      *                  Only the first element is used on a call to {@link #get()}.
-     * @param filters a (possibly empty) list of product filters.
-     *                        All elements are used in order on a call to {@link #get()}.
+     * @param filters   a (possibly empty) list of service filters.
+     *                  All elements are used in order on a call to {@link #get()}.
      */
-    public CompositeProvider(final List<PP> providers, final List<PT> filters) {
+    public CompositeProvider(final List<SP> providers, final List<SF> filters) {
         if (providers.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -41,21 +41,25 @@ public final class CompositeProvider<P, PP extends Supplier<P>, PT extends Unary
     }
 
     /**
-     * Returns a protective copy of the list of product providers.
+     * Returns a protective copy of the list of service providers.
      * The list is never empty.
      */
-    public List<PP> providers() { return new ArrayList<>(providers); }
+    public List<SP> providers() {
+        return new ArrayList<>(providers);
+    }
 
     /**
-     * Returns a protective copy of the list of product filters.
+     * Returns a protective copy of the list of service filters.
      * The list may be empty.
      */
-    public List<PT> filters() { return new ArrayList<>(filters); }
+    public List<SF> filters() {
+        return new ArrayList<>(filters);
+    }
 
     @Override
-    public P get() {
-        P product = providers.get(0).get();
-        for (UnaryOperator<P> filter : filters) {
+    public S get() {
+        S product = providers.get(0).get();
+        for (UnaryOperator<S> filter : filters) {
             product = filter.apply(product);
         }
         return product;

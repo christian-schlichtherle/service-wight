@@ -44,69 +44,80 @@ import static java.util.Optional.*;
  * The composite provider uses only the first product provider, but all product filters.
  * Client applications can introspect, and potentially modify, the lists of product providers and filters.
  *
- * @see    ServiceLoader
  * @author Christian Schlichtherle
+ * @see ServiceLoader
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public final class ServiceLocator {
 
-    private static final Comparator<Supplier<?>> PROVIDER_COMPARATOR = (
+    private static final Comparator<Supplier<?>> PROVIDER_COMPARATOR =
             comparingInt((Supplier<?> provider) ->
                     ofNullable(provider.getClass().getDeclaredAnnotation(ServiceImplementation.class))
                             .map(ServiceImplementation::priority)
                             .orElse(0)
-            ).reversed()
-    );
+            ).reversed();
 
-    private static final Comparator<UnaryOperator<?>> FILTER_COMPARATOR = (
+    private static final Comparator<UnaryOperator<?>> FILTER_COMPARATOR =
             comparingInt(mapping ->
                     ofNullable(mapping.getClass().getDeclaredAnnotation(ServiceImplementation.class))
                             .map(ServiceImplementation::priority)
                             .orElse(0)
-            )
-    );
+            );
 
     private final Optional<ClassLoader> classLoader;
 
-    /** Constructs a new service locator using the current thread's context classloader. */
-    public ServiceLocator() { this(Thread.currentThread().getContextClassLoader()); }
-
-    /** Constructs a new service locator using the given class loader. */
-    public ServiceLocator(ClassLoader cl) { this.classLoader = ofNullable(cl); }
+    /**
+     * Constructs a new service locator using the current thread's context classloader.
+     */
+    public ServiceLocator() {
+        this(Thread.currentThread().getContextClassLoader());
+    }
 
     /**
-     * Returns a composite provider for some product.
-     *
-     * @param  <P> the type of the product to provide.
-     * @param  provider the interface of the locatable product providers.
-     * @return A new composite provider for some product.
-     * @throws ServiceConfigurationError if loading or instantiating a located class fails for some reason.
+     * Constructs a new service locator using the given class loader.
      */
-    public <P, PP extends Supplier<P>, MP extends UnaryOperator<P>>
-    CompositeProvider<P, PP, MP> provider(Class<PP> provider) { return provider(provider, empty()); }
+    public ServiceLocator(ClassLoader cl) {
+        this.classLoader = ofNullable(cl);
+    }
 
     /**
-     * Returns a composite provider for some product.
+     * Returns a provider of some service.
      *
-     * @param  <P> the type of the product to provide.
-     * @param  provider the interface of the locatable product providers.
-     * @param  filter the interface of the locatable product filters.
-     * @return A new composite provider form some product.
+     * @param <S>      the type of the service.
+     * @param <SP>     the type of the service providers.
+     * @param provider the interface class of the locatable service providers.
+     * @return A new composite provider for some service.
      * @throws ServiceConfigurationError if loading or instantiating a located class fails for some reason.
      */
-    public <P, PP extends Supplier<P>, MP extends UnaryOperator<P>>
-    CompositeProvider<P, PP, MP> provider(Class<PP> provider, Class<MP> filter) {
+    public <S, SP extends Supplier<S>>
+    CompositeProvider<S, SP, ? extends UnaryOperator<S>> provider(Class<SP> provider) {
+        return provider(provider, empty());
+    }
+
+    /**
+     * Returns a provider of some service.
+     *
+     * @param <S>      the type of the service.
+     * @param <SP>     the type of the service providers.
+     * @param <SF>     the type of the service filters.
+     * @param provider the interface class of the locatable service providers.
+     * @param filter   the interface class of the locatable service filters.
+     * @return A new composite provider form some service.
+     * @throws ServiceConfigurationError if loading or instantiating a located class fails for some reason.
+     */
+    public <S, SP extends Supplier<S>, SF extends UnaryOperator<S>>
+    CompositeProvider<S, SP, SF> provider(Class<SP> provider, Class<SF> filter) {
         return provider(provider, of(filter));
     }
 
-    private <P, PP extends Supplier<P>, MP extends UnaryOperator<P>>
-    CompositeProvider<P, PP, MP> provider(Class<PP> factory, Optional<Class<MP>> filter) {
+    private <S, SP extends Supplier<S>, SF extends UnaryOperator<S>>
+    CompositeProvider<S, SP, SF> provider(Class<SP> factory, Optional<Class<SF>> filter) {
         return new CompositeProvider<>(providers(factory),
-                filter.map(this::mappings).orElseGet(Collections::emptyList));
+                filter.map(this::filters).orElseGet(Collections::emptyList));
     }
 
-    private <P, PP extends Supplier<P>> List<PP> providers(final Class<? extends PP> service) {
-        final List<PP> providers = new ArrayList<>();
+    private <S, SP extends Supplier<S>> List<SP> providers(final Class<? extends SP> service) {
+        final List<SP> providers = new ArrayList<>();
         instancesOf(service).forEach(providers::add);
         providers.sort(PROVIDER_COMPARATOR);
         instanceOf(service).map(s -> {
@@ -119,8 +130,8 @@ public final class ServiceLocator {
         return providers;
     }
 
-    private <P, MP extends UnaryOperator<P>> List<MP> mappings(final Class<? extends MP> service) {
-        final List<MP> mappings = new ArrayList<>();
+    private <S, SF extends UnaryOperator<S>> List<SF> filters(final Class<? extends SF> service) {
+        final List<SF> mappings = new ArrayList<>();
         instancesOf(service).forEach(mappings::add);
         mappings.sort(FILTER_COMPARATOR);
         return mappings;

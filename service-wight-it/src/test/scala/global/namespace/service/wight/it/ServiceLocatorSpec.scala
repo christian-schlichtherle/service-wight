@@ -34,7 +34,7 @@ class ServiceLocatorSpec extends WordSpec {
         locator.provider[String, Subject, UnlocatableTransformation].get should not be null
       }
 
-      "consistently reproduce the expected product" in {
+      "consistently reproduce the expected service" in {
         val provider = locator.provider[String, Subject, Salutation]
         provider.get shouldBe Expected
         provider.get shouldBe Expected
@@ -63,7 +63,7 @@ object ServiceLocatorSpec {
     private val locator = new ServiceLocator
 
     def provider[P, PP <: Supplier[P] : ClassTag]: CompositeProvider[P, PP, _ <: UnaryOperator[P]] =
-      locator.provider(runtimeClassOf[PP])
+      locator.provider[P, PP](runtimeClassOf[PP])
 
     def provider[P, PP <: Supplier[P] : ClassTag, MP <: UnaryOperator[P] : ClassTag]: CompositeProvider[P, PP, MP] =
       locator.provider(runtimeClassOf[PP], runtimeClassOf[MP])

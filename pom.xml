@@ -7,9 +7,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>net.java.truecommons</groupId>
-        <artifactId>truecommons-parent</artifactId>
-        <version>122</version>
+        <groupId>global.namespace.parent-pom</groupId>
+        <artifactId>parent-pom</artifactId>
+        <version>5</version>
     </parent>
 
     <groupId>global.namespace.service-wight</groupId>
