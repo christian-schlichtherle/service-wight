@@ -3,13 +3,14 @@
   - Copyright (C) 2005-2018 Schlichtherle IT Services.
   - All rights reserved. Use is subject to license terms.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>global.namespace.parent-pom</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>5</version>
+        <version>8</version>
     </parent>
 
     <groupId>global.namespace.service-wight</groupId>
@@ -25,8 +26,8 @@
         <connection>scm:git:https://github.com/christian-schlichtherle/service-wight.git</connection>
         <developerConnection>scm:git:git@github.com:christian-schlichtherle/service-wight.git</developerConnection>
         <url>https://github.com/christian-schlichtherle/service-wight</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <modules>
         <module>service-wight-core</module>
