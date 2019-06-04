@@ -10,7 +10,7 @@ import java.util.function.{Supplier, UnaryOperator}
 
 import global.namespace.service.wight.core.{CompositeProvider, ServiceLocator}
 import global.namespace.service.wight.it.ServiceLocatorSpec._
-import global.namespace.service.wight.it.case1.{UnlocatableProvider, UnlocatableTransformation}
+import global.namespace.service.wight.it.case1.{UnlocatableServiceProvider, UnlocatableServiceFilter}
 import global.namespace.service.wight.it.case2.{Salutation, Subject}
 import org.scalatest.Matchers._
 import org.scalatest._
@@ -26,12 +26,12 @@ class ServiceLocatorSpec extends WordSpec {
     "told to create a composite provider" should {
       "throw a service configuration error if it can't locate a provider" in {
         intercept[ServiceConfigurationError] {
-          locator.provider[String, UnlocatableProvider]
+          locator.provider[String, UnlocatableServiceProvider]
         }
       }
 
       "not throw a service configuration error if it can't locate a mapping" in {
-        locator.provider[String, Subject, UnlocatableTransformation].get should not be null
+        locator.provider[String, Subject, UnlocatableServiceFilter].get should not be null
       }
 
       "consistently reproduce the expected service" in {
@@ -62,11 +62,11 @@ object ServiceLocatorSpec {
 
     private val locator = new ServiceLocator
 
-    def provider[P, PP <: Supplier[P] : ClassTag]: CompositeProvider[P, PP, _ <: UnaryOperator[P]] =
-      locator.provider[P, PP](runtimeClassOf[PP])
+    def provider[S, SP <: Supplier[S] : ClassTag]: CompositeProvider[S, SP, _ <: UnaryOperator[S]] =
+      locator.provider[S, SP](runtimeClassOf[SP])
 
-    def provider[P, PP <: Supplier[P] : ClassTag, MP <: UnaryOperator[P] : ClassTag]: CompositeProvider[P, PP, MP] =
-      locator.provider(runtimeClassOf[PP], runtimeClassOf[MP])
+    def provider[S, SP <: Supplier[S] : ClassTag, SF <: UnaryOperator[S] : ClassTag]: CompositeProvider[S, SP, SF] =
+      locator.provider(runtimeClassOf[SP], runtimeClassOf[SF])
 
     private def runtimeClassOf[A](implicit tag: ClassTag[A]): Class[A] = {
       require(tag != classTag[Nothing], "Missing type parameter.")

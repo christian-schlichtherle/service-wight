@@ -6,4 +6,4 @@ package global.namespace.service.wight.it.case1;
 
 import java.util.function.UnaryOperator;
 
-public abstract class UnlocatableTransformation implements UnaryOperator<String> { }
+public abstract class UnlocatableServiceFilter implements UnaryOperator<String> { }

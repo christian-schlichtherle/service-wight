@@ -6,4 +6,4 @@ package global.namespace.service.wight.it.case1;
 
 import java.util.function.Supplier;
 
-public abstract class UnlocatableProvider implements Supplier<String> { }
+public abstract class UnlocatableServiceProvider implements Supplier<String> { }
