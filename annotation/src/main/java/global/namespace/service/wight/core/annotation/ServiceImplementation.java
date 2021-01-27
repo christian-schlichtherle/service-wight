@@ -4,27 +4,33 @@
  */
 package global.namespace.service.wight.core.annotation;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Indicates that the annotated type is an implementation of a locatable service.
  *
  * @author Christian Schlichtherle
  */
-@Target(ElementType.TYPE)
+@Target(TYPE)
 @Documented
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RUNTIME)
 public @interface ServiceImplementation {
 
     /**
      * Returns the service interface classes.
-     * If empty, all superclasses and implemented interfaces get scanned for
-     * {@link ServiceInterface} annotations.
+     * If empty, all superclasses and implemented interfaces get scanned for {@link ServiceInterface} annotations.
      *
      * @return The service interface classes.
      */
     Class<?>[] value() default {};
 
-    /** Returns the priority of this service implementation. */
+    /**
+     * Returns the priority of this service implementation.
+     */
     int priority() default 0;
 }

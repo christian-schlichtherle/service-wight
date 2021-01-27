@@ -9,26 +9,18 @@
     <parent>
         <groupId>global.namespace.service-wight</groupId>
         <artifactId>service-wight</artifactId>
-        <version>0.5.3-SNAPSHOT</version>
+        <version>0.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>service-wight-core</artifactId>
 
     <name>Service Wight Core</name>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-compile</id>
-                        <configuration>
-                            <proc>none</proc>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    <dependencies>
+        <dependency>
+            <groupId>global.namespace.service-wight</groupId>
+            <artifactId>service-wight-annotation</artifactId>
+            <version>0.6.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

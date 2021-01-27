@@ -15,7 +15,7 @@
 
     <groupId>global.namespace.service-wight</groupId>
     <artifactId>service-wight</artifactId>
-    <version>0.5.3-SNAPSHOT</version>
+    <version>0.6.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Service Wight</name>
@@ -30,19 +30,10 @@
     </scm>
 
     <modules>
-        <module>service-wight-core</module>
-        <module>service-wight-it</module>
+        <module>annotation</module>
+        <module>core</module>
+        <module>it</module>
     </modules>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>global.namespace.service-wight</groupId>
-                <artifactId>service-wight-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <pluginManagement>

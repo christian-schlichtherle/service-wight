@@ -5,15 +5,16 @@
 package global.namespace.service.wight.core.annotation;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.TYPE;
 
 /**
  * Indicates that the annotated type is the interface of a locatable service.
  *
- * @see    <a href="package-summary.html">Package Summary</a>
  * @author Christian Schlichtherle
  */
-@Target(ElementType.TYPE)
+@Target(TYPE)
 @Documented
-public @interface ServiceInterface { }
+public @interface ServiceInterface {
+}
