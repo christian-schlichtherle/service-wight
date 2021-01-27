@@ -1,4 +1,9 @@
-# Service Wight [![Maven Central](https://img.shields.io/maven-central/v/global.namespace.service-wight/service-wight-core.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22global.namespace.service-wight%22%20AND%20a%3A%22service-wight-core%22) [![Build Status](https://api.travis-ci.org/christian-schlichtherle/service-wight.svg)](https://travis-ci.org/christian-schlichtherle/service-wight)
+[![Release Notes](https://img.shields.io/github/release/christian-schlichtherle/service-wight.svg)](https://github.com/christian-schlichtherle/service-wight/releases/latest)
+[![Maven Central](https://img.shields.io/maven-central/v/global.namespace.service-wight/service-wight-core.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22global.namespace.service-wight%22%20AND%20a%3A%22service-wight-core%22)
+[![Apache License 2.0](https://img.shields.io/github/license/christian-schlichtherle/service-wight.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![Test Workflow](https://github.com/christian-schlichtherle/service-wight/workflows/test/badge.svg)](https://github.com/christian-schlichtherle/service-wight/actions?query=workflow%3Atest)
+
+# Service Wight
 
 Service Wight composes services from providers and filters located on the class path - you can think of it as 
 [`ServiceLoader`] on steroids.
@@ -26,7 +31,7 @@ In Maven:
 <dependency>
     <groupId>global.namespace.service-wight</groupId>
     <artifactId>service-wight-core</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.2</version>
 </dependency>
 ```
 
