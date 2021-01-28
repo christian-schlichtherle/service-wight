@@ -4,21 +4,20 @@
  */
 package global.namespace.service.wight.it
 
+import global.namespace.service.wight.core.{CompositeProvider, ServiceLocator}
+import global.namespace.service.wight.it.ServiceLocatorSpec._
+import global.namespace.service.wight.it.case1.{UnlocatableServiceFilter, UnlocatableServiceProvider}
+import global.namespace.service.wight.it.case2.{Salutation, Subject}
+import org.scalatest.matchers.should.Matchers._
+import org.scalatest.wordspec.AnyWordSpec
+
 import java.util.Collections.reverse
 import java.util.ServiceConfigurationError
 import java.util.function.{Supplier, UnaryOperator}
-
-import global.namespace.service.wight.core.{CompositeProvider, ServiceLocator}
-import global.namespace.service.wight.it.ServiceLocatorSpec._
-import global.namespace.service.wight.it.case1.{UnlocatableServiceProvider, UnlocatableServiceFilter}
-import global.namespace.service.wight.it.case2.{Salutation, Subject}
-import org.scalatest.Matchers._
-import org.scalatest._
-
 import scala.reflect.{ClassTag, classTag}
 
 /** @author Christian Schlichtherle */
-class ServiceLocatorSpec extends WordSpec {
+class ServiceLocatorSpec extends AnyWordSpec {
 
   val locator = new LocatorSugar
 
