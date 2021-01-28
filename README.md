@@ -25,13 +25,24 @@ Service Wight targets Java SE 8 and is covered by the Apache License, Version 2.
 
 ### Dependencies
 
-In Maven:
+For making services locatable:
+
+```xml
+<dependency>
+    <groupId>global.namespace.service-wight</groupId>
+    <artifactId>service-wight-annotation</artifactId>
+    <version>0.6.0</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+For using the service locator and its findings:
 
 ```xml
 <dependency>
     <groupId>global.namespace.service-wight</groupId>
     <artifactId>service-wight-core</artifactId>
-    <version>0.5.2</version>
+    <version>0.6.0</version>
 </dependency>
 ```
 
