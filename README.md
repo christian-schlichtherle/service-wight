@@ -46,7 +46,7 @@ import java.util.function.*;
 For making services locatable:
 
 ```java
-import global.namespace.service.wight.core.annotation.*;
+import global.namespace.service.wight.annotation.*;
 ```
 
 For using the service locator and its findings:

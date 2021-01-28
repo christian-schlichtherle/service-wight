@@ -4,7 +4,7 @@
  */
 package global.namespace.service.wight.core;
 
-import global.namespace.service.wight.core.annotation.ServiceImplementation;
+import global.namespace.service.wight.annotation.ServiceImplementation;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;

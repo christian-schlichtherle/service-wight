@@ -1,2 +1,2 @@
-global.namespace.service.wight.core.annotation.processing.ServiceImplementationProcessor
-global.namespace.service.wight.core.annotation.processing.ServiceInterfaceProcessor
+global.namespace.service.wight.annotation.processing.ServiceImplementationProcessor
+global.namespace.service.wight.annotation.processing.ServiceInterfaceProcessor
