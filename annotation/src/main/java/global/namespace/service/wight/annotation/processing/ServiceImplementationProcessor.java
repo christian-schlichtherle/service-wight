@@ -6,21 +6,20 @@ package global.namespace.service.wight.annotation.processing;
 
 import global.namespace.service.wight.annotation.ServiceImplementation;
 import global.namespace.service.wight.annotation.ServiceInterface;
+import lombok.val;
 
-import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.lang.model.element.*;
+import javax.lang.model.element.AnnotationValue;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.SimpleAnnotationValueVisitor8;
 import javax.lang.model.util.SimpleTypeVisitor8;
-import javax.tools.FileObject;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.*;
-import java.util.Map.Entry;
 
 import static java.util.Comparator.comparing;
 import static javax.lang.model.element.ElementKind.CLASS;
@@ -42,10 +41,10 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
 
     @Override
     public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-        final Registry registry = new Registry();
-        for (final Element elem : roundEnv.getElementsAnnotatedWith(ServiceImplementation.class)) {
+        val registry = new Registry();
+        for (val elem : roundEnv.getElementsAnnotatedWith(ServiceImplementation.class)) {
             if (elem instanceof TypeElement) {
-                final TypeElement impl = (TypeElement) elem;
+                val impl = (TypeElement) elem;
                 if (valid(impl)) {
                     if (!processAnnotations(impl, registry)) {
                         if (!processTypeHierarchy(impl, registry)) {
@@ -63,7 +62,7 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
 
     private boolean valid(final TypeElement impl) {
         {
-            final Set<Modifier> modifiers = impl.getModifiers();
+            val modifiers = impl.getModifiers();
             if (!modifiers.contains(PUBLIC)
                     || modifiers.contains(ABSTRACT)
                     || impl.getKind() != CLASS) {
@@ -77,8 +76,8 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
                 }
             }
         }
-        final Collection<ExecutableElement> constructors = new LinkedList<>();
-        for (final Element elem : impl.getEnclosedElements()) {
+        val constructors = new LinkedList<ExecutableElement>();
+        for (val elem : impl.getEnclosedElements()) {
             if (elem.getKind() == CONSTRUCTOR) {
                 constructors.add((ExecutableElement) elem);
             }
@@ -90,8 +89,8 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
         return true;
     }
 
-    private boolean valid(final Collection<ExecutableElement> ctors) {
-        for (final ExecutableElement ctor : ctors) {
+    private boolean valid(final Collection<? extends ExecutableElement> ctors) {
+        for (val ctor : ctors) {
             if (valid(ctor)) {
                 return true;
             }
@@ -103,19 +102,16 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
         return ctor.getModifiers().contains(PUBLIC) && ctor.getParameters().isEmpty();
     }
 
-    private boolean processAnnotations(
-            final TypeElement impl,
-            final Registry registry) {
-        final DeclaredType implType = (DeclaredType) impl.asType();
-        for (final AnnotationMirror mirror : processingEnv.getElementUtils().getAllAnnotationMirrors(impl)) {
+    private boolean processAnnotations(final TypeElement impl, final Registry registry) {
+        val implType = (DeclaredType) impl.asType();
+        for (val mirror : processingEnv.getElementUtils().getAllAnnotationMirrors(impl)) {
             if (!ServiceImplementation.class.getName().equals(
                     ((TypeElement) mirror.getAnnotationType().asElement()).getQualifiedName().toString())) {
                 continue;
             }
-            final Map<? extends ExecutableElement, ? extends AnnotationValue>
-                    values = mirror.getElementValues();
-            for (final Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : values.entrySet()) {
-                final ExecutableElement element = entry.getKey();
+            val values = mirror.getElementValues();
+            for (val entry : values.entrySet()) {
+                val element = entry.getKey();
                 if (!"value".equals(element.getSimpleName().toString())) {
                     continue;
                 }
@@ -139,7 +135,7 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
                     @Override
                     public Boolean visitArray(final List<? extends AnnotationValue> values, final Void p) {
                         boolean found = false;
-                        for (AnnotationValue value : values) {
+                        for (val value : values) {
                             found |= value.accept(this, p);
                         }
                         return found;
@@ -193,16 +189,16 @@ public final class ServiceImplementationProcessor extends ServiceAnnnotationProc
         }
 
         void persist() {
-            final Filer filer = processingEnv.getFiler();
-            for (final Entry<TypeElement, Collection<TypeElement>> entry : services.entrySet()) {
-                final TypeElement iface = entry.getKey();
-                final Collection<TypeElement> coll = entry.getValue();
+            val filer = processingEnv.getFiler();
+            for (val entry : services.entrySet()) {
+                val iface = entry.getKey();
+                val coll = entry.getValue();
                 if (!coll.isEmpty()) {
-                    final String path = "META-INF/services/" + name(iface);
+                    val path = "META-INF/services/" + name(iface);
                     try {
-                        final FileObject fo = filer.createResource(CLASS_OUTPUT, "", path);
-                        try (Writer w = fo.openWriter()) {
-                            for (final TypeElement impl : coll) {
+                        val fo = filer.createResource(CLASS_OUTPUT, "", path);
+                        try (val w = fo.openWriter()) {
+                            for (val impl : coll) {
                                 w.append(name(impl)).append("\n");
                                 debug(String.format(Locale.ENGLISH, "Registered in: %s", path), impl);
                             }

@@ -5,12 +5,11 @@
 package global.namespace.service.wight.annotation.processing;
 
 import global.namespace.service.wight.annotation.ServiceInterface;
+import lombok.val;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -29,7 +28,7 @@ public final class ServiceInterfaceProcessor extends ServiceAnnnotationProcessor
 
     @Override
     public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-        for (final Element elem : roundEnv.getElementsAnnotatedWith(ServiceInterface.class)) {
+        for (val elem : roundEnv.getElementsAnnotatedWith(ServiceInterface.class)) {
             if (elem instanceof TypeElement) {
                 valid((TypeElement) elem);
             } else {
@@ -41,7 +40,7 @@ public final class ServiceInterfaceProcessor extends ServiceAnnnotationProcessor
 
     private void valid(final TypeElement iface) {
         {
-            final Set<Modifier> modifiers = iface.getModifiers();
+            val modifiers = iface.getModifiers();
             if (!modifiers.contains(PUBLIC) || modifiers.contains(FINAL)) {
                 error("Not a public and non-final class or interface.", iface);
                 return;
@@ -55,7 +54,7 @@ public final class ServiceInterfaceProcessor extends ServiceAnnnotationProcessor
             }
         }
         final Collection<ExecutableElement> constructors = new LinkedList<>();
-        for (final Element elem : iface.getEnclosedElements()) {
+        for (val elem : iface.getEnclosedElements()) {
             if (elem.getKind() == CONSTRUCTOR) {
                 constructors.add((ExecutableElement) elem);
             }
@@ -66,7 +65,7 @@ public final class ServiceInterfaceProcessor extends ServiceAnnnotationProcessor
     }
 
     private boolean valid(final Collection<ExecutableElement> constructors) {
-        for (final ExecutableElement ctor : constructors) {
+        for (val ctor : constructors) {
             if (valid(ctor)) {
                 return true;
             }
@@ -74,7 +73,7 @@ public final class ServiceInterfaceProcessor extends ServiceAnnnotationProcessor
         return false;
     }
 
-    private boolean valid(final ExecutableElement ctor) {
+    private boolean valid(ExecutableElement ctor) {
         return (ctor.getModifiers().contains(PUBLIC) ||
                 ctor.getModifiers().contains(PROTECTED)) &&
                 ctor.getParameters().isEmpty();
