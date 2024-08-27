@@ -125,7 +125,7 @@ public final class ServiceLocator {
             return null;
         });
         if (providers.isEmpty()) {
-            throw new ServiceConfigurationError("No service located for " + service + ".");
+            throw new ServiceConfigurationError("No providers located for " + service + ".");
         }
         return providers;
     }
